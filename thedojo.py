@@ -51,10 +51,18 @@ class TheDojo (cmd.Cmd):
 
     @docopt_cmd
     def do_add_person(self, arg):
-        """Usage: add_person <person_name> <FELLOW|STAFF> [wants_accommodation]
-        """
-
-        print(arg)
+        """Usage: add_person <first_name> <last_name> (fellow | staff) [<wants_accommodation>]"""
+        fname = arg['<first_name>']
+        lname = arg['<last_name>']
+        fellow = arg['fellow']
+        accd =arg['<wants_accommodation>']
+        if fellow:
+            print("Fellow " + fname + " " + lname + " has been successfuly added")
+        else:
+            print("Staff " + fname + " " + lname + " has been successfuly added")
+        print(fname + " has been allocated the office Blue")
+        if accd == "Y" and fellow:
+            print(fname + " has been allocated the livingspace Python")
 
     def do_quit(self, arg):
         """Exists The Dojo."""
