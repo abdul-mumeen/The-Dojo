@@ -3,16 +3,22 @@ from rooms.dojo import Dojo
 
 class TestCreatRoom(TestCase):
     def test_create_room_successfully(self):
+
+        """ This function test the successful creation of single type of room """
         ndojo = Dojo()
         initial_room_count = len(ndojo.all_rooms)
-        self.assertEqual(initial_room_count,0)
-        blue_office = ndojo.create_room(["Blue"],"office")
+        self.assertEqual(initial_room_count, 0)
+        blue_office = ndojo.create_room(["Blue"], "office")
         self.assertTrue(blue_office)
         new_room_count = len(ndojo.all_rooms)
-        self.assertEqual(new_room_count - initial_room_count,1)
+        self.assertEqual(new_room_count - initial_room_count, 1)
 
     def test_create_multiple_rooms_successfully(self):
+        """ This function test the successful creation of multiple rooms of a type """
+
         ndojo = Dojo()
+
+        """ Returns True when successfully created the multiple rooms """
         initial_room_count = len(ndojo.all_rooms)
         log = ndojo.create_room(["Blue", "Green", "Purple"], "office")
         self.assertTrue(log)
@@ -20,9 +26,13 @@ class TestCreatRoom(TestCase):
         self.assertEqual(new_room_count - initial_room_count,3)
         ndojo.create_room(["Yellow", "Brown", "Black"], "livingspace")
         latest_room_count = len(ndojo.all_rooms)
-        self.assertEqual(latest_room_count - new_room_count,3)
+        self.assertEqual(latest_room_count - new_room_count, 3)
+
     def test_check_invalid_input(self):
+        """ This function test for invalid inputs """
         ndojo = Dojo()
+
+        """ Returs error message instead of true with invalid inputs """
         log = ndojo.create_room([],"  ")
         self.assertEqual(log,"Cannot create rooms with empty room name and/or empty room type")
         log = ndojo.create_room([" "],"office")
@@ -31,8 +41,12 @@ class TestCreatRoom(TestCase):
         self.assertEqual(log,"\nThe livingspace at index 1 cannot be created due to empty name.")
         log = ndojo.create_room(["Green", "Black"],"piper")
         self.assertEqual(log,"\nCannot creae room(s), invalid room type enterred")
+
     def test_check_duplicate_names(self):
+        """ This function test for duplicate room names """
         ndojo = Dojo()
+
+        """ Returs error message instead of true with duplicate values """
         log = ndojo.create_room(["Green", "Blue"],"office")
         log = ndojo.create_room(["Blue"],"office")
         self.assertEqual(log,"\nThe name of office at index 0 already existed.")
