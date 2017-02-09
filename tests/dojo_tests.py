@@ -1,5 +1,5 @@
 from unittest import TestCase
-from classes.dojo import Dojo
+from rooms.dojo import Dojo
 
 class TestCreatRoom(TestCase):
     def test_create_room_successfully(self):

@@ -1,5 +1,5 @@
 from unittest import TestCase
-from classes.persons import Persons
+from persons.persons import Persons
 
 class TestPersons(TestCase):
     def test_add_person_successfully(self):
