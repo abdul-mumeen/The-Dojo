@@ -1,27 +1,30 @@
-from rooms import Rooms
+from rooms.rooms import Rooms
 
 class Office(Rooms):
+
     """docstring for Office."""
-    def __init__(self, arg):
-        super(Office, Rooms).__init__()
-        self.arg = arg
+    def __init__(self, name):
+        super().__init__(name)
         self.totalSpace = 6
         self.allocatedStaffs = []
-    def add_staff(self, staff):
+
+    def add_fellow(self, staff):
         if staff != null:
-            if staffExist():
-                return "Staff is already allocated to this room"
-            elif staffExistElsewhere():
-                return "Staff is already allocated to another room"
-            else:
-                self.allocatedstaffs.append(staff)
-                return True
-    def remove_staff(self,staff):
+            self.allocatedStaffs.append(staff)
+            return True
+
+    def isFull(self):
+        if len(self.allocatedFellows) + len(self.allocatedStaffs) >= self.totalSpace:
+            return True
+        else:
+            return False
+
+    def remove_fellow(self, staff):
         if staff != null:
             removed = False
-            for i in range(0,len(self.allocatedstaffs)):
-                if allocatedstaffs[i].ID == staff.ID:
-                    #allocatedstaffs.splice(i,i+1)
+            for i in range(0, len(self.allocatedStaffs)):
+                if allocatedStaffs[i].ID == staff.ID:
+                    #allocatedFellows.splice(i,i+1)
                     removed = True
             if removed:
                 return removed
@@ -29,4 +32,4 @@ class Office(Rooms):
                 return "Staff is not allocated to this room"
 
     def checkAvailableSpace(self):
-        return self.totalSpace - len(self.allocatedStaffs)
+        return self.totalSpace - (len(self.allocatedStaffs) + len(self.allocatedFellows))

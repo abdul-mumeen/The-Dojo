@@ -1,7 +1,6 @@
-from persons.employee import Employee
+from persons.persons import Person
 
-class Staff(Employee):
-    """docstring for Staff.Employee"""
+class Staff(Person):
+    """docstring for Staff"""
     def __init__(self):
         super(Staff, self).__init__()
-        

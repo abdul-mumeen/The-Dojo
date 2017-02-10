@@ -23,7 +23,7 @@ class TestCreatRoom(TestCase):
         log = ndojo.create_room(["Blue", "Green", "Purple"], "office")
         self.assertTrue(log)
         new_room_count = len(ndojo.all_rooms)
-        self.assertEqual(new_room_count - initial_room_count,3)
+        self.assertEqual(new_room_count - initial_room_count, 3)
         ndojo.create_room(["Yellow", "Brown", "Black"], "livingspace")
         latest_room_count = len(ndojo.all_rooms)
         self.assertEqual(latest_room_count - new_room_count, 3)
@@ -33,22 +33,22 @@ class TestCreatRoom(TestCase):
         ndojo = Dojo()
 
         """ Returs error message instead of true with invalid inputs """
-        log = ndojo.create_room([],"  ")
-        self.assertEqual(log,"Cannot create rooms with empty room name and/or empty room type")
-        log = ndojo.create_room([" "],"office")
-        self.assertEqual(log,"\nThe office at index 0 cannot be created due to empty name.")
-        log = ndojo.create_room(["Green", " ", "Black"],"livingspace")
-        self.assertEqual(log,"\nThe livingspace at index 1 cannot be created due to empty name.")
-        log = ndojo.create_room(["Green", "Black"],"piper")
-        self.assertEqual(log,"\nCannot creae room(s), invalid room type enterred")
+        log = ndojo.create_room([], "  ")
+        self.assertEqual(log, "Cannot create rooms with empty room name and/or empty room type")
+        log = ndojo.create_room([" "], "office")
+        self.assertEqual(log, "\nThe office at index 0 cannot be created due to empty name.")
+        log = ndojo.create_room(["Green", " ", "Black"], "livingspace")
+        self.assertEqual(log, "\nThe livingspace at index 1 cannot be created due to empty name.")
+        log = ndojo.create_room(["Green", "Black"], "piper")
+        self.assertEqual(log, "\nCannot create room(s), invalid room type enterred")
 
     def test_check_duplicate_names(self):
         """ This function test for duplicate room names """
         ndojo = Dojo()
 
         """ Returs error message instead of true with duplicate values """
-        log = ndojo.create_room(["Green", "Blue"],"office")
-        log = ndojo.create_room(["Blue"],"office")
-        self.assertEqual(log,"\nThe name of office at index 0 already existed.")
-        log = ndojo.create_room(["Brown","Black","Black"],"livingspace")
-        self.assertEqual(log,"\nThe name of office at index 2 already existed.")
+        log = ndojo.create_room(["Green", "Blue"], "office")
+        log = ndojo.create_room(["Blue"], "office")
+        self.assertEqual(log, "\nThe office at index 0 already existed.")
+        log = ndojo.create_room(["Brown", "Black", "Black"], "livingspace")
+        self.assertEqual(log, "\nThe name of livingspace 2 already existed.")
