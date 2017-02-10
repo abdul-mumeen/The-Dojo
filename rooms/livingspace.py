@@ -1,8 +1,7 @@
 from rooms import Rooms
 
-class LivingSpace(object):
+class LivingSpace(Rooms):
     """docstring for LivingSpace."""
     def __init__(self, arg):
-        super(LivingSpace, self).__init__()
+        super(LivingSpace, Rooms).__init__()
         self.arg = arg
-        

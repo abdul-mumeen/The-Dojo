@@ -1,9 +1,9 @@
 from rooms import Rooms
 
-class Office(object):
+class Office(Rooms):
     """docstring for Office."""
     def __init__(self, arg):
-        super(Office, self).__init__()
+        super(Office, Rooms).__init__()
         self.arg = arg
         self.totalSpace = 6
         self.allocatedStaffs = []
