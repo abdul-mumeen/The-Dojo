@@ -14,7 +14,7 @@ class Office(Rooms):
             return True
 
     def isFull(self):
-        if len(self.allocatedFellows) + len(self.allocatedStaffs) >= self.totalSpace:
+        if len(self.allocated_fellows) + len(self.allocatedStaffs) >= self.totalSpace:
             return True
         else:
             return False
@@ -32,4 +32,4 @@ class Office(Rooms):
                 return "Staff is not allocated to this room"
 
     def checkAvailableSpace(self):
-        return self.totalSpace - (len(self.allocatedStaffs) + len(self.allocatedFellows))
+        return self.totalSpace - (len(self.allocatedStaffs) + len(self.allocated_fellows))

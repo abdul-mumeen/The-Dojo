@@ -32,7 +32,7 @@ class TestCreatRoom(TestCase):
         """ This function test for invalid inputs """
         ndojo = Dojo()
 
-        """ Returs error message instead of true with invalid inputs """
+        """ Returns error message instead of true with invalid inputs """
         log = ndojo.create_room([], "  ")
         self.assertEqual(log, "Cannot create rooms with empty room name and/or empty room type")
         log = ndojo.create_room([" "], "office")
@@ -46,9 +46,21 @@ class TestCreatRoom(TestCase):
         """ This function test for duplicate room names """
         ndojo = Dojo()
 
-        """ Returs error message instead of true with duplicate values """
+        """ Returns error message instead of true with duplicate values """
         log = ndojo.create_room(["Green", "Blue"], "office")
         log = ndojo.create_room(["Blue"], "office")
         self.assertEqual(log, "\nThe office at index 0 already existed.")
         log = ndojo.create_room(["Brown", "Black", "Black"], "livingspace")
-        self.assertEqual(log, "\nThe name of livingspace 2 already existed.")
+        self.assertEqual(log, "\nThe livingspace at index 2 already existed.")
+
+    def test_print_rooms(self):
+        """ This function test the printing of names of occupant of a room """
+        ndojo = Dojo()
+        ndojo.create_room(["Blue", "Brown"], "office")
+        ndojo.add_person("Hassan El-Saheed", "fellow", "Y")
+        name_1 = ndojo.print_room("Blue")
+        name_2 = ndojo.print_room("Brown")
+        if name_1 != "":
+            self.assertEqual(name_1, "HASSAN EL-SAHEED")
+        else:
+            self.assertEqual(name_2, "HASSAN EL-SAHEED")
