@@ -76,12 +76,18 @@ class TestCreatRoom(TestCase):
         self.assertEqual(names[2][:-1], "HASSAN EL-SAHEED, MIKE TYSON")
 
     def test_print_unallocated(self):
+        """ This function test the functin print_unallocated """
         ndojo = Dojo()
         ndojo.add_person("Hassan El-Saheed", "fellow", "Y")
         ndojo.add_person("Mike Tyson", "staff")
         ndojo.add_person("Abass Aminu", "fellow", "N")
-        print_to_screen = ndojo.print_uallocated()
-        self.assertEqual(print_to_screen,"HASSAN EL-SAHEED - NO OFFICE\n" + \
+        print_to_screen = ndojo.print_unallocated()
+        self.assertEqual(print_to_screen[:-1],"HASSAN EL-SAHEED - NO OFFICE\n" + \
                                             "MIKE TYSON - NO OFFICE\n" + \
                                             "ABASS AMINU - NO OFFICE\n" + \
                                             "HASSAN EL-SAHEED - NO LIVINGSPACE")
+        ndojo.print_unallocated("test_file.txt")
+        file = open("data/test_file.txt", "r")
+        names = file.readlines()
+        file.close()
+        self.assertEqual(names[2][:-1],"MIKE TYSON - NO OFFICE")
