@@ -140,8 +140,26 @@ class Dojo(object):
                 return ""
 
     def print_room(self, room_name):
+        """" This function names of allocated members of the room """
         print_out = ""
         if room_name in self.allocated:
-            for fellow in self.allocated[room_name]:
-                print_out += fellow.name.upper()
+            for person in self.allocated[room_name]:
+                print_out += person.name.upper() + "\n"
+        else:
+            print_out = "No allocation to this room"
         return print_out
+
+    def print_allocation(self, file_name=None):
+        """ This function print out all allocated rooms and their allocated members"""
+        print_out = ""
+        for room in self.allocated:
+            names = ""
+            for person in self.allocated[room]:
+                names += person.name + ", "
+            names = names[:-2]
+            print_out += room + "\n" + ("-" * len(names)) + "\n" + names + "\n"
+        if file_name is not None:
+            file = open("data/%s" % file_name, "w" )
+            file.write(print_out.upper())
+            file.close()
+        return print_out.upper()

@@ -56,11 +56,32 @@ class TestCreatRoom(TestCase):
     def test_print_rooms(self):
         """ This function test the printing of names of occupant of a room """
         ndojo = Dojo()
-        ndojo.create_room(["Blue", "Brown"], "office")
+        ndojo.create_room(["Brown"], "office")
         ndojo.add_person("Hassan El-Saheed", "fellow", "Y")
-        name_1 = ndojo.print_room("Blue")
-        name_2 = ndojo.print_room("Brown")
-        if name_1 != "":
-            self.assertEqual(name_1, "HASSAN EL-SAHEED")
-        else:
-            self.assertEqual(name_2, "HASSAN EL-SAHEED")
+        name = ndojo.print_room("Brown")
+        self.assertEqual(name, "HASSAN EL-SAHEED\n")
+
+    def test_print_allocation(self):
+        """ This function test the output from printing allocated persons """
+        ndojo = Dojo()
+        ndojo.create_room(["Blue"], "office")
+        ndojo.add_person("Hassan El-Saheed", "fellow", "Y")
+        ndojo.add_person("Mike Tyson", "staff")
+        print_to_screen = ndojo.print_allocation()
+        self.assertEqual(print_to_screen, "BLUE\n----------------------------\nHASSAN EL-SAHEED, MIKE TYSON\n")
+        ndojo.print_allocation("test_file.txt")
+        file = open("data/test_file.txt", "r")
+        names = file.readlines()
+        file.close()
+        self.assertEqual(names[2][:-1], "HASSAN EL-SAHEED, MIKE TYSON")
+
+    def test_print_unallocated(self):
+        ndojo = Dojo()
+        ndojo.add_person("Hassan El-Saheed", "fellow", "Y")
+        ndojo.add_person("Mike Tyson", "staff")
+        ndojo.add_person("Abass Aminu", "fellow", "N")
+        print_to_screen = ndojo.print_uallocated()
+        self.assertEqual(print_to_screen,"HASSAN EL-SAHEED - NO OFFICE\n" + \
+                                            "MIKE TYSON - NO OFFICE\n" + \
+                                            "ABASS AMINU - NO OFFICE\n" + \
+                                            "HASSAN EL-SAHEED - NO LIVINGSPACE")
