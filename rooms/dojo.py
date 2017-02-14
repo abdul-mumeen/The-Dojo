@@ -5,7 +5,9 @@ from rooms.livingspace import LivingSpace
 import random
 import string
 
+
 class Dojo(object):
+    """This is the app main class that calls all the functions"""
     def __init__(self):
         self.all_rooms = {}
         self.staff_list = []
@@ -14,6 +16,10 @@ class Dojo(object):
         self.unallocated = {"office": [], "livingspace" : []}
 
     def create_room(self, room_name, room_type):
+        """
+        This function create a single room or multiple rooms of the same type
+        by receiving an array of room names an the room type.
+        """
         log = ""
         if room_type.strip() != "" and len(room_name) > 0:
             if room_type == "office" or room_type == "livingspace":
@@ -40,6 +46,10 @@ class Dojo(object):
 
 
     def add_person(self, name, designation, wants_accommodation="N"):
+        """
+        This function add a person by calling the add_fellow
+        or add_staff function as the case may be.
+        """
         if name.strip() != "":
             if designation.lower().strip() == "fellow":
                 fellow = self.add_fellow(name, wants_accommodation)
@@ -49,7 +59,6 @@ class Dojo(object):
                     return "Staff cannot request for a livingspace!"
                 else:
                     staff = self.add_staff(name)
-                    self.staff_list.append(staff)
                     return staff
             else:
                 return "Person cannot be created due to invalid designation!"
@@ -57,6 +66,10 @@ class Dojo(object):
             return "Person cannot be created with an empty name!"
 
     def add_fellow(self, name, accommodation):
+        """
+        This function create a fellow and add it to the list of staff
+        while calling the allocate function to allocate room.
+        """
         new_fellow = Fellow()
         new_fellow.name = name
         new_fellow.generate_id("fellow", self.fellow_list)
@@ -69,6 +82,10 @@ class Dojo(object):
         return new_fellow
 
     def add_staff(self, name):
+        """
+        This function create a staff and add it to the list of staff
+        while calling the allocate function to allocate room.
+        """
         new_staff = Staff()
         new_staff.name = name
         new_staff.generate_id("staff", self.staff_list)
@@ -78,11 +95,16 @@ class Dojo(object):
         return new_staff
 
     def check_room_name_exist(self, room_name):
-        found = False
-        for room in self.all_rooms:
-            if room == room_name:
-                return True
-        return found
+        """
+        This function checks if a room name passed already existed
+        in the list of all rooms.
+        """
+        return room_name in self.all_rooms
+        # found = False
+        # for room in self.all_rooms:
+        #     if room == room_name:
+        #         return True
+        # return found
 
     def get_available_rooms(self, room_type):
         """
@@ -91,6 +113,9 @@ class Dojo(object):
         """
         available_room = []
         for room in self.all_rooms:
+        #     room_available = self.all_rooms[room].total_space > \
+        #                                     len(self.allocated[room]) \
+        #                                     if room in self.allocated else True
             if room in self.allocated:
                 room_available = self.all_rooms[room].total_space > \
                                                 len(self.allocated[room])
@@ -154,7 +179,7 @@ class Dojo(object):
             return print_out.upper()
 
     def print_unallocated(self, file_name=None):
-        """ This function prints the list of unallocated pwrsons"""
+        """ This function prints the list of unallocated persons"""
         print_out = ""
         for key in self.unallocated:
             for person in self.unallocated[key]:

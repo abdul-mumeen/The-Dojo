@@ -1,8 +1,7 @@
 from rooms.rooms import Rooms
 
 class Office(Rooms):
-
-    """docstring for Office."""
+    """This office class inherits from the room class"""
     def __init__(self, name):
         super().__init__(name)
         self.totalSpace = 6
