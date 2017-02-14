@@ -70,11 +70,9 @@ class Dojo(object):
         This function create a fellow and add it to the list of staff
         while calling the allocate function to allocate room.
         """
-        new_fellow = Fellow()
-        new_fellow.name = name
+        new_fellow = Fellow(name, "fellow")
         new_fellow.generate_id("fellow", self.fellow_list)
         new_fellow.office = self.allocate_room(new_fellow, Office)
-        new_fellow.designation = "fellow"
         if accommodation.upper() == "Y":
             new_fellow.livingspace = self.allocate_room(new_fellow, LivingSpace)
             new_fellow.wants_accommodation = True
@@ -86,10 +84,8 @@ class Dojo(object):
         This function create a staff and add it to the list of staff
         while calling the allocate function to allocate room.
         """
-        new_staff = Staff()
-        new_staff.name = name
+        new_staff = Staff(name, "staff")
         new_staff.generate_id("staff", self.staff_list)
-        new_staff.designation = "staff"
         new_staff.office = self.allocate_room(new_staff, Office)
         self.staff_list.append(new_staff)
         return new_staff
@@ -113,14 +109,14 @@ class Dojo(object):
         """
         available_room = []
         for room in self.all_rooms:
-        #     room_available = self.all_rooms[room].total_space > \
-        #                                     len(self.allocated[room]) \
-        #                                     if room in self.allocated else True
-            if room in self.allocated:
-                room_available = self.all_rooms[room].total_space > \
-                                                len(self.allocated[room])
-            else:
-                room_available = True
+            room_available = self.all_rooms[room].total_space > \
+                                            len(self.allocated[room]) \
+                                            if room in self.allocated else True
+            # if room in self.allocated:
+            #     room_available = self.all_rooms[room].total_space > \
+            #                                     len(self.allocated[room])
+            # else:
+            #     room_available = True
             if room_available != False and \
                         isinstance(self.all_rooms[room], room_type):
                 available_room.append(self.all_rooms[room])

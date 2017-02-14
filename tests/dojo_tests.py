@@ -15,7 +15,6 @@ class TestCreatRoom(TestCase):
 
     def test_create_multiple_rooms_successfully(self):
         """ This function test the successful creation of multiple rooms of a type """
-
         ndojo = Dojo()
 
         """ Returns True when successfully created the multiple rooms """
