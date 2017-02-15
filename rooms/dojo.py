@@ -56,6 +56,7 @@ class Dojo(object):
                 return fellow
             elif designation.lower().strip() == "staff":
                 if wants_accommodation.upper() == "Y":
+                    print("Staff cannot request for a livingspace!")
                     return "Staff cannot request for a livingspace!"
                 else:
                     staff = self.add_staff(name)
@@ -190,7 +191,10 @@ class Dojo(object):
     def write_to_file(self, print_out, file_name):
         """ This function write a string to the file_name specified"""
         if file_name is not None:
-            file = open("data/%s" % file_name, "w" )
+            file = open("data/%s.txt" % file_name, "w" )
             file.write(print_out.upper())
             file.close()
             print ("List have been successfuly written to file")
+
+    def reset(self):
+        self.__init__()

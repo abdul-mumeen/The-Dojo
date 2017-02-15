@@ -3,12 +3,14 @@
 import sys
 import cmd
 from docopt import docopt, DocoptExit
+from rooms.dojo import Dojo
 
 
 def docopt_cmd(func):
     """
     This decorator
     """
+
     def fn(self, arg):
         try:
             opt = docopt(fn.__doc__, arg)
@@ -39,15 +41,35 @@ class TheDojo (cmd.Cmd):
         + ' (type help for a list of commands.)'
     prompt = 'The_Dojo >>> '
     file = None
+    dojo = Dojo()
+
+    @docopt_cmd
+    def do_print_room(self, arg):
+        """Usage: print_room <room_name>  """
+        room = arg['<room_name>']
+        self.dojo.print_room(room)
+
+    @docopt_cmd
+    def do_print_allocations(self, arg):
+        """Usage: print_allocations [--o=filename]  """
+        file_name = arg['--o']
+        self.dojo.print_allocation(file_name)
+
+    @docopt_cmd
+    def do_print_unallocated(self, arg):
+        """Usage: print_unallocated [--o=filename]  """
+        file_name = arg['--o']
+        self.dojo.print_unallocated(file_name)
 
     @docopt_cmd
     def do_create_room(self, arg):
         """Usage: create_room <room_type> <room_name>...  """
 
-        roomType = arg['<room_type>']
+        room_type = arg['<room_type>']
         rooms = arg['<room_name>']
-        for room in rooms:
-            print('An ' + roomType + ' called ' + room + ' has been successfully created')
+        self.dojo.create_room(rooms, room_type)
+        # for room in rooms:
+        #     print('An ' + roomType + ' called ' + room + ' has been successfully created')
 
     @docopt_cmd
     def do_add_person(self, arg):
@@ -55,22 +77,22 @@ class TheDojo (cmd.Cmd):
         fname = arg['<first_name>']
         lname = arg['<last_name>']
         fellow = arg['fellow']
-        accd =arg['<wants_accommodation>']
-        if fellow:
-            print("Fellow " + fname + " " + lname + " has been successfuly added")
-        else:
-            print("Staff " + fname + " " + lname + " has been successfuly added")
-        print(fname + " has been allocated the office Blue")
-        if accd == "Y" and fellow:
-            print(fname + " has been allocated the livingspace Python")
+        designation = "fellow" if fellow else "staff"
+        accommodation =arg['<wants_accommodation>']
+        self.dojo.add_person(fname + lname, designation, accommodation)
+        # if fellow:
+        #     print("Fellow " + fname + " " + lname + " has been successfuly added")
+        # else:
+        #     print("Staff " + fname + " " + lname + " has been successfuly added")
+        # print(fname + " has been allocated the office Blue")
+        # if accd == "Y" and fellow:
+        #     print(fname + " has been allocated the livingspace Python")
 
     def do_quit(self, arg):
-        """Exists The Dojo."""
+        """Exits The Dojo."""
 
         print('=========== Good Bye =============!\n')
         exit()
 
-
 TheDojo().cmdloop()
-
 print(opt)
