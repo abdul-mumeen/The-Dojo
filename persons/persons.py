@@ -17,7 +17,7 @@ class Person(object):
 
     def generate_id(self, designation, person_list):
         """This function generates id for either staff or fellow."""
-        prefix = "F-" if designation.lower == "fellow" else "S-"
+        prefix = "F-" if designation.lower() == "fellow" else "S-"
         id_exist = True
         person_id = ""
         while id_exist:

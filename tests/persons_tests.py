@@ -3,6 +3,8 @@ from rooms.dojo import Dojo
 from persons.staffs import Staff
 from persons.fellows import Fellow
 from persons.persons import Person
+import sys
+
 
 class TestPersons(TestCase):
     dojo = Dojo()
@@ -32,57 +34,100 @@ class TestPersons(TestCase):
         self.assertEqual(new_staff, \
                     "Person cannot be created due to invalid designation!")
 
-    def test_valid_fellow_id(self):
-        """ this function test for invalid fellow id"""
-        print_out = self.dojo.rellocate(" ", "Blue")
-        self.assertEqual(print_out, "Invalid fellow id")
-        print_out = self.dojo.rellocate("asdff", "Blue")
-        self.assertEqual(print_out, "Invalid fellow id")
-        print_out = self.dojo.rellocate("A-FG4HU", "Blue")
-        self.assertEqual(print_out, "Invalid fellow id")
 
-    def test_valid_staff_id(self):
-        """ this function test for invalid staff id"""
-        print_out = self.dojo.rellocate(" ", "Blue")
-        self.assertEqual(print_out, "Invalid staff id")
-        print_out = self.dojo.rellocate("aswdf", "Blue")
-        self.assertEqual(print_out, "Invalid staff id")
-        print_out = self.dojo.rellocate("A-FJ9HU", "Blue")
-        self.assertEqual(print_out, "Invalid staff id")
+class TestReallocate(TestCase):
+    dojo = Dojo()
+    def test_empty_valid_id(self):
+        """ this function test for invalid id"""
+        self.dojo.reallocate_person(" ", "Blue")
+        output = sys.stdout.getvalue().strip()
+        self.assertEqual(output, "Invalid id supplied")
 
-    def test_not_existing_id(self):
-        """ This function test for existing id"""
-        print_out = self.dojo.rellocate("F-GHJ7Y", "Blue")
-        self.assertEqual(print_out, "Fellow id does not exist")
-        print_out = self.dojo.rellocate("S-AS23Y", "Blue")
-        self.assertEqual(print_out, "Staff id does not exist")
+    def test_wrong_format_invalid_id(self):
+        self.dojo.reallocate_person("asdff", "Blue")
+        output = sys.stdout.getvalue().strip()
+        self.assertEqual(output, "Invalid id supplied")
+
+    def test_wrong_invalid_id(self):
+        self.dojo.reallocate_person("A-FG4HU", "Blue")
+        output = sys.stdout.getvalue().strip()
+        self.assertEqual(output, "Invalid id supplied")
+
+    def test_fellow_not_existing_id(self):
+        """ This function test for fellow existing id"""
+        self.dojo.reallocate_person("F-GHJ7Y", "Blue")
+        output = sys.stdout.getvalue().strip()
+        self.assertEqual(output, "The id supplied is not found")
+
+    def test_staff_not_existing_id(self):
+        """ This function test for staff existing id"""
+        self.dojo.reallocate_person("S-AS23Y", "Blue")
+        output = sys.stdout.getvalue().strip()
+        self.assertEqual(output, "The id supplied is not found")
 
     def test_room_exist(self):
         """ This function test if the room supplied exist"""
+        self.dojo.reset()
         self.dojo.create_room(["Blue"], "office")
         new_fellow = self.dojo.add_person("Jeremy Johnson", "fellow", "Y")
-        print_out = self.dojo.rellocate(new_fellow.ID, "Green")
-        self.assertEqual(print_out, "Room does not exist")
+        self.dojo.reallocate_person(new_fellow.ID, "Green")
+        output = sys.stdout.getvalue().strip()
+        self.assertEqual(output, "Room not found")
 
-    def test_office_to_livingspace(self):
+
+    def test_add_staff_to_livingspace(self):
         """ This function test if room rellocating to is of the same type"""
         self.dojo.reset()
         self.dojo.create_room(["Blue"], "office")
+        new_fellow = self.dojo.add_person("Jeremy Johnson", "staff")
         self.dojo.create_room(["Green"], "livingspace")
-        new_fellow = self.dojo.add_person("Jeremy Johnson", "fellow", "N")
-        print_out = self.dojo.rellocate(new_fellow.ID, "Green")
-        self.assertEqual(print_out, \
-                    "Cannot move a person from office to livingspace")
+        print_out = self.dojo.reallocate_person(new_fellow.ID, "Green")
+        output = sys.stdout.getvalue().strip()
+        self.assertEqual(output, \
+                            "Staff cannot be moved to a livingspace")
 
-    def test_livingspace_to_office(self):
+    def test_fellow_office_reallocate(self):
+        """ This function test if office reallocation is successful"""
+        self.dojo.reset()
+        self.dojo.create_room(["Green"], "office")
+        new_fellow = self.dojo.add_person("Jeremy Johnson", "fellow", "N")
+        self.dojo.create_room(["Brown"], "office")
+        self.dojo.reallocate_person(new_fellow.ID, "Brown")
+        output = sys.stdout.getvalue().strip()
+        self.assertEqual(output, \
+                    "Fellow has been successfully moved to the new office")
+
+    def test_staff_office_reallocate(self):
+        """ This function test if office reallocation is successful"""
+        self.dojo.reset()
+        self.dojo.create_room(["Green"], "office")
+        new_fellow = self.dojo.add_person("Jeremy Johnson", "staff")
+        self.dojo.create_room(["Brown"], "office")
+        self.dojo.reallocate_person(new_fellow.ID, "Brown")
+        output = sys.stdout.getvalue().strip()
+        self.assertEqual(output, \
+                    "Staff has been successfully moved to the new office")
+
+    def test_fellow_livingspace_reallocate(self):
+        """ This function test if office reallocation is successful"""
+        self.dojo.reset()
+        self.dojo.create_room(["Green"], "livingspace")
+        new_fellow = self.dojo.add_person("Jeremy Johnson", "fellow", "Y")
+        self.dojo.create_room(["Brown"], "livingspace")
+        self.dojo.reallocate_person(new_fellow.ID, "Brown")
+        output = sys.stdout.getvalue().strip()
+        self.assertEqual(output, \
+                    "Fellow has been successfully moved to the new livingspace")
+
+    def test_fellow_livingspace(self):
         """ This function test if room rellocating to is of the same type"""
         self.dojo.reset()
         self.dojo.create_room(["Green"], "livingspace")
         new_fellow = self.dojo.add_person("Jeremy Johnson", "fellow", "N")
-        self.dojo.create_room(["Blue"], "office")
-        print_out = self.dojo.rellocate(new_fellow.ID, "lue")
-        self.assertEqual(print_out, \
-                    "Cannot move a person from livingspace to office")
+        self.dojo.reallocate_person(new_fellow.ID, "Green")
+        output = sys.stdout.getvalue().strip()
+        self.assertEqual(output, \
+                    "Fellow does not want a livingspace")
 
     def test_room_full(self):
         self.dojo.reset()
@@ -93,6 +138,7 @@ class TestPersons(TestCase):
         new_fellow = self.dojo.add_person("Jeremy Crowell", "fellow", "Y")
         self.dojo.create_room(["Blue"], "livingspace")
         new_fellow = self.dojo.add_person("Jeremy Python", "fellow", "Y")
-        print_out = self.dojo.rellocate(new_fellow.ID, "Green")
-        self.assertEqual(print_out, \
-                    "The livingspace selected is full")
+        self.dojo.reallocate_person(new_fellow.ID, "Green")
+        output = sys.stdout.getvalue().strip()
+        self.assertEqual(output, \
+                    "The room selected is full")

@@ -194,7 +194,90 @@ class Dojo(object):
             file = open("data/%s.txt" % file_name, "w" )
             file.write(print_out.upper())
             file.close()
-            print ("List have been successfuly written to file")
+            print ("List have been successfully written to file")
 
     def reset(self):
         self.__init__()
+
+    def check_valid_id(self, input_val):
+        valid_string = string.ascii_uppercase + string.digits + "-"
+        output = False if input_val.strip() == "" or \
+                    not set(input_val.upper()).issubset(set(valid_string)) or \
+                                    input_val.upper()[0] not in ["F", "S"] or \
+                                        len(input_val) != 7 \
+                                            else True
+        return output
+
+    def get_person_list_index(self, person_id):
+        index = -1
+        person_list = self.fellow_list if person_id.upper()[0] == "F" \
+                                                    else self.staff_list
+        for i in range(len(person_list)):
+            if person_list[i].ID.upper() == person_id.upper():
+                index = i
+                break
+        return index
+
+
+    def reallocate_person(self, person_id, new_room_name):
+        if self.check_valid_id(person_id):
+            id_index = self.get_person_list_index(person_id)
+            if id_index > -1:
+                if new_room_name in self.all_rooms:
+                    if not new_room_name in self.allocated:
+                        self.move_person(person_id, id_index, new_room_name)
+                    elif self.all_rooms[new_room_name].total_space > \
+                            len(self.allocated[new_room_name]):
+                        self.move_person(person_id, id_index, new_room_name)
+                    else:
+                        print("The room selected is full")
+                else:
+                    print("Room not found")
+            else:
+                print("The id supplied is not found")
+        else:
+            print("Invalid id supplied")
+
+
+    def move_person(self, person_id, index, new_room_name):
+        if isinstance(self.all_rooms[new_room_name], LivingSpace) and \
+                    person_id.upper()[0] == "S":
+            print("Staff cannot be moved to a livingspace")
+        elif isinstance(self.all_rooms[new_room_name], LivingSpace):
+            if self.fellow_list[index].wants_accommodation:
+                if self.fellow_list[index].livingspace != None:
+                    self.remove_from_allocated(person_id)
+                self.fellow_list[index].livingspace = \
+                                    self.all_rooms[new_room_name]
+                self.add_room_to_alloacted(new_room_name)
+                self.allocated[new_room_name].append(self.fellow_list[index])
+                print("Fellow has been successfully " + \
+                                    "moved to the new livingspace")
+            else:
+                print("Fellow does not want a livingspace")
+        else:
+            if person_id.upper()[0] == "S":
+                if self.staff_list[index].office != None:
+                    self.remove_from_allocated(person_id)
+                self.staff_list[index].office = self.all_rooms[new_room_name]
+                self.add_room_to_alloacted(new_room_name)
+                self.allocated[new_room_name].append(self.staff_list[index])
+                print("Staff has been successfully moved to the new office")
+            else:
+                if self.fellow_list[index].livingspace != None:
+                    self.remove_from_allocated(person_id)
+                self.fellow_list[index].office = self.all_rooms[new_room_name]
+                self.add_room_to_alloacted(new_room_name)
+                self.allocated[new_room_name].append(self.fellow_list[index])
+                print("Fellow has been successfully moved to the new office")
+
+    def add_room_to_alloacted(self, room_name):
+        if not room_name in self.allocated:
+            self.allocated[room_name] = []
+
+    def remove_from_allocated(self, person_id):
+        for key in self.allocated:
+            for i in range(len(self.allocated[key])):
+                if self.allocated[key][i].ID.upper() == person_id.upper():
+                    self.allocated[key].pop(i)
+                    return True
