@@ -9,7 +9,7 @@ class Person(object):
         self.designation = designation
 
     def get_existing_id(self, person_list):
-        """This function extracts a list of existing id for a list of person"""
+        """This function extracts a list of existing id from person list"""
         id_list = []
         for i in range(0, len(person_list)):
             id_list.append(person_list[i].ID)

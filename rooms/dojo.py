@@ -26,19 +26,21 @@ class Dojo(object):
                 i = 0
                 for room in room_name:
                     if room.strip() == "":
-                        log += "\nThe " + room_type + " at index " + str(i) + " cannot be created due to empty name."
+                        log += "\nThe {} at index {} ".format(room_type, \
+                            str(i)) + "cannot be created due to empty name."
                     elif self.check_room_name_exist(room):
-                        log += "\nThe " + room_type + " at index " + str(i) + " already existed."
+                        log += "\nThe {} at index {} ".format(room_type, \
+                            str(i)) + "already existed."
                     else:
-                        new_room = Office(room) if room_type == "office" else LivingSpace(room)
+                        new_room = Office(room) if room_type == \
+                                        "office" else LivingSpace(room)
                         self.all_rooms[new_room.name] = new_room
-
                     i += 1
             else:
                 log += "\nCannot create room(s), invalid room type enterred"
         else:
-            log += "Cannot create rooms with empty room name and/or empty room type"
-
+            log += "Cannot create rooms with empty " + \
+                                    "room name and/or empty room type"
         if log == "":
             return True
         else:
@@ -75,7 +77,8 @@ class Dojo(object):
         new_fellow.generate_id("fellow", self.fellow_list)
         new_fellow.office = self.allocate_room(new_fellow, Office)
         if accommodation.upper() == "Y":
-            new_fellow.livingspace = self.allocate_room(new_fellow, LivingSpace)
+            new_fellow.livingspace = self.allocate_room(new_fellow, \
+                                                            LivingSpace)
             new_fellow.wants_accommodation = True
         self.fellow_list.append(new_fellow)
         return new_fellow
@@ -197,18 +200,23 @@ class Dojo(object):
             print ("List have been successfully written to file")
 
     def reset(self):
+        """ This function reset Dojo to it initializatio stage"""
         self.__init__()
 
     def check_valid_id(self, input_val):
+        """ this function checks validity of the id supplied"""
         valid_string = string.ascii_uppercase + string.digits + "-"
         output = False if input_val.strip() == "" or \
-                    not set(input_val.upper()).issubset(set(valid_string)) or \
-                                    input_val.upper()[0] not in ["F", "S"] or \
+                not set(input_val.upper()).issubset(set(valid_string)) or \
+                                input_val.upper()[0] not in ["F", "S"] or \
                                         len(input_val) != 7 \
                                             else True
         return output
 
     def get_person_list_index(self, person_id):
+        """ This function gets the index of the person_id on
+            the staff list or fellow list
+        """
         index = -1
         person_list = self.fellow_list if person_id.upper()[0] == "F" \
                                                     else self.staff_list
@@ -220,6 +228,7 @@ class Dojo(object):
 
 
     def reallocate_person(self, person_id, new_room_name):
+        """ This function reallocate a person to a supplied room """
         if self.check_valid_id(person_id):
             id_index = self.get_person_list_index(person_id)
             if id_index > -1:
@@ -240,6 +249,7 @@ class Dojo(object):
 
 
     def move_person(self, person_id, index, new_room_name):
+        """ This function move a person to the new room"""
         if isinstance(self.all_rooms[new_room_name], LivingSpace) and \
                     person_id.upper()[0] == "S":
             print("Staff cannot be moved to a livingspace")
@@ -272,10 +282,12 @@ class Dojo(object):
                 print("Fellow has been successfully moved to the new office")
 
     def add_room_to_alloacted(self, room_name):
+        """ this function add a new room to the room allocated list """
         if not room_name in self.allocated:
             self.allocated[room_name] = []
 
     def remove_from_allocated(self, person_id):
+        """ this function remove a person from previously allocated room"""
         for key in self.allocated:
             for i in range(len(self.allocated[key])):
                 if self.allocated[key][i].ID.upper() == person_id.upper():

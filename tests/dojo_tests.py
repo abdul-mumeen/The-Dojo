@@ -47,7 +47,7 @@ class TestCreatRoom(TestCase):
     def test_invalid_in_array_input(self):
         log = self.ndojo.create_room(["Green", " ", "Black"], "livingspace")
         self.assertEqual(log, \
-            "\nThe livingspace at index 1 cannot be created due to empty name.")
+           "\nThe livingspace at index 1 cannot be created due to empty name.")
 
     def test_invalid_room_type(self):
         log = self.ndojo.create_room(["Green", "Black"], "piper")
@@ -60,7 +60,8 @@ class TestCreatRoom(TestCase):
         log = self.ndojo.create_room(["Green", "Blue"], "office")
         log = self.ndojo.create_room(["Blue"], "office")
         self.assertEqual(log, "\nThe office at index 0 already existed.")
-        log = self.ndojo.create_room(["Brown", "Black", "Black"], "livingspace")
+        log = self.ndojo.create_room(\
+                    ["Brown", "Black", "Black"], "livingspace")
         self.assertEqual(log, "\nThe livingspace at index 2 already existed.")
 
     def test_print_rooms(self):
