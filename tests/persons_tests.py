@@ -23,15 +23,22 @@ class TestPersons(TestCase):
         self.assertIsInstance(new_fellow, Person)
         self.assertEqual(new_fellow.livingspace, "")
 
-    def test_add_person_invalid_input(self):
+    def test_add_person_invalid_input_1(self):
         """ This function checks for invalid inputs """
         new_staff = self.dojo.add_person("Andy Carroll", "staff", "Y")
-        self.assertEqual(new_staff, "Staff cannot request for a livingspace!")
+        output = sys.stdout.getvalue().strip()
+        self.assertEqual(output, "Staff cannot request for a livingspace!")
+
+    def test_add_person_invalid_input_2(self):
         new_staff = self.dojo.add_person("  ", "staff")
-        self.assertEqual(new_staff, \
+        output = sys.stdout.getvalue().strip()
+        self.assertEqual(output, \
                     "Person cannot be created with an empty name!")
+
+    def test_add_person_invalid_input_3(self):
         new_staff = self.dojo.add_person("Samora Dake", "type", "Y")
-        self.assertEqual(new_staff, \
+        output = sys.stdout.getvalue().strip()
+        self.assertEqual(output, \
                     "Person cannot be created due to invalid designation!")
 
 

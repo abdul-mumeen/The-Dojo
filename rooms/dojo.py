@@ -44,7 +44,7 @@ class Dojo(object):
         if log == "":
             return True
         else:
-            return log
+            print(log)
 
 
     def add_person(self, name, designation, wants_accommodation="N"):
@@ -59,14 +59,14 @@ class Dojo(object):
             elif designation.lower().strip() == "staff":
                 if wants_accommodation.upper() == "Y":
                     print("Staff cannot request for a livingspace!")
-                    return "Staff cannot request for a livingspace!"
+                    # return "Staff cannot request for a livingspace!"
                 else:
                     staff = self.add_staff(name)
                     return staff
             else:
-                return "Person cannot be created due to invalid designation!"
+                print("Person cannot be created due to invalid designation!")
         else:
-            return "Person cannot be created with an empty name!"
+            print("Person cannot be created with an empty name!")
 
     def add_fellow(self, name, accommodation):
         """
@@ -157,7 +157,8 @@ class Dojo(object):
                 print_out += person.name.upper() + "\n"
         else:
             print_out = "No allocation to this room"
-        return print_out
+        print_out = room_name.upper() + "\n" + ("-" * 15) + "\n" + print_out
+        print(print_out)
 
     def print_allocation(self, file_name=None):
         """
@@ -173,10 +174,10 @@ class Dojo(object):
             print_out += room + "\n" + ("-" * len(names)) + \
                          "\n" + names + "\n"
         if print_out == "":
-            return "Nobody on the allocated list."
+            print("Nobody on the allocated list.")
         else:
             self.write_to_file(print_out, file_name)
-            return print_out.upper()
+            print(print_out.upper())
 
     def print_unallocated(self, file_name=None):
         """ This function prints the list of unallocated persons"""
@@ -186,10 +187,11 @@ class Dojo(object):
                 print_out += person.name.upper() + " - NO " + \
                                             key.upper() + "\n"
         if print_out == "":
-            return "Nobody on the unallocated list."
+            print("Nobody on the unallocated list.")
         else:
+            print_out = "UNALLOCATED LIST\n\n" + print_out
             self.write_to_file(print_out, file_name)
-            return print_out.upper()
+            print(print_out.upper())
 
     def write_to_file(self, print_out, file_name):
         """ This function write a string to the file_name specified"""
@@ -197,7 +199,7 @@ class Dojo(object):
             file = open("data/%s.txt" % file_name, "w" )
             file.write(print_out.upper())
             file.close()
-            print ("List have been successfully written to file")
+            print("List have been successfully written to file")
 
     def reset(self):
         """ This function reset Dojo to it initializatio stage"""
