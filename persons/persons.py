@@ -5,7 +5,7 @@ class Person(object):
     def __init__(self, name, designation):
         self.name = name
         self.ID = ""
-        self.office = ""
+        self.office = None
         self.designation = designation
 
     def get_existing_id(self, person_list):
@@ -27,3 +27,15 @@ class Person(object):
             if not (person_id in self.get_existing_id(person_list)):
                 id_exist = False
             self.ID = person_id
+
+    def print_me(self):
+        first_name = self.name.split()[0].title()
+        print("{} {} has been successfully added.".format(\
+                                    self.designation.title(), \
+                                            self.name.title()))
+        if self.office:
+            print("{} has been allocated the office {}".format(\
+                            first_name, self.office.name.title()))
+        else:
+            print("{} has been placed".format(first_name) + \
+                                " on a waiting list for office")

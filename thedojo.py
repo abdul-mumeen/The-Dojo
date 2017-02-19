@@ -22,11 +22,11 @@ def docopt_cmd(func):
             print(e)
             return
 
-        except SystemExit:
-            # The SystemExit exception prints the usage for --help
-            # We do not need to do the print here.
-
-            return
+        # except SystemExit:
+        #     # The SystemExit exception prints the usage for --help
+        #     # We do not need to do the print here.
+        #     print("low waist")
+        #     return
 
         return func(self, opt)
 
@@ -68,8 +68,6 @@ class TheDojo (cmd.Cmd):
         room_type = arg['<room_type>']
         rooms = arg['<room_name>']
         self.dojo.create_room(rooms, room_type)
-        # for room in rooms:
-        #     print('An ' + roomType + ' called ' + room + ' has been successfully created')
 
     @docopt_cmd
     def do_add_person(self, arg):
@@ -80,18 +78,15 @@ class TheDojo (cmd.Cmd):
         fellow = arg['fellow']
         designation = "fellow" if fellow else "staff"
         accommodation =arg['<wants_accommodation>']
-        self.dojo.add_person(fname + lname, designation, accommodation)
-        # if fellow:
-        #     print("Fellow " + fname + " " + lname + " has been successfuly added")
-        # else:
-        #     print("Staff " + fname + " " + lname + " has been successfuly added")
-        # print(fname + " has been allocated the office Blue")
-        # if accd == "Y" and fellow:
-        #     print(fname + " has been allocated the livingspace Python")
+        accommodation = "N" if not accommodation else accommodation
+        new_person = self.dojo.add_person(fname + " " + lname, \
+                                                designation, accommodation)
+        if new_person:
+            new_person.print_me()
 
+    @docopt_cmd
     def do_quit(self, arg):
         """Exits The Dojo."""
-
         print('=========== Good Bye =============!\n')
         exit()
 

@@ -22,7 +22,8 @@ class Dojo(object):
         """
         log = ""
         if room_type.strip() != "" and len(room_name) > 0:
-            if room_type == "office" or room_type == "livingspace":
+            if room_type.lower() == "office" or \
+                                        room_type.lower() == "livingspace":
                 i = 0
                 for room in room_name:
                     if room.strip() == "":
@@ -32,9 +33,7 @@ class Dojo(object):
                         log += "\nThe {} at index {} ".format(room_type, \
                             str(i)) + "already existed."
                     else:
-                        new_room = Office(room) if room_type == \
-                                        "office" else LivingSpace(room)
-                        self.all_rooms[new_room.name] = new_room
+                        self.add_room(room, room_type)
                     i += 1
             else:
                 log += "\nCannot create room(s), invalid room type enterred"
@@ -45,6 +44,19 @@ class Dojo(object):
             return True
         else:
             print(log)
+
+    def add_room(self, room_name, room_type):
+        new_room = None
+        if room_type == "office":
+            new_room = Office(room_name)
+            print("An office called {} ".format(room_name) + \
+                                            "has been successfully created")
+        else:
+            new_room = LivingSpace(room_name)
+            room_name = room_name.title()
+            print("A livingspace called {} ".format(room_name) + \
+                                            "has been successfully created")
+        self.all_rooms[new_room.name] = new_room
 
 
     def add_person(self, name, designation, wants_accommodation="N"):
@@ -59,7 +71,6 @@ class Dojo(object):
             elif designation.lower().strip() == "staff":
                 if wants_accommodation.upper() == "Y":
                     print("Staff cannot request for a livingspace!")
-                    # return "Staff cannot request for a livingspace!"
                 else:
                     staff = self.add_staff(name)
                     return staff
@@ -100,11 +111,6 @@ class Dojo(object):
         in the list of all rooms.
         """
         return room_name in self.all_rooms
-        # found = False
-        # for room in self.all_rooms:
-        #     if room == room_name:
-        #         return True
-        # return found
 
     def get_available_rooms(self, room_type):
         """
@@ -114,13 +120,9 @@ class Dojo(object):
         available_room = []
         for room in self.all_rooms:
             room_available = self.all_rooms[room].total_space > \
-                                            len(self.allocated[room]) \
-                                            if room in self.allocated else True
-            # if room in self.allocated:
-            #     room_available = self.all_rooms[room].total_space > \
-            #                                     len(self.allocated[room])
-            # else:
-            #     room_available = True
+                                    len(self.allocated[room]) \
+                                        if room in self.allocated else True
+
             if room_available != False and \
                         isinstance(self.all_rooms[room], room_type):
                 available_room.append(self.all_rooms[room])
