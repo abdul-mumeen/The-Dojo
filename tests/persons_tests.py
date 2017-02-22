@@ -81,7 +81,8 @@ class TestReallocate(TestCase):
         new_fellow = self.dojo.add_person("Jeremy Johnson", "fellow", "Y")
         self.dojo.reallocate_person(new_fellow.ID, "Green")
         output = sys.stdout.getvalue().strip()
-        self.assertEqual(output, "Room not found")
+        output = output.split("\n")
+        self.assertEqual(output[len(output) - 1], "Room not found")
 
 
     def test_add_staff_to_livingspace(self):
@@ -90,9 +91,10 @@ class TestReallocate(TestCase):
         self.dojo.create_room(["Blue"], "office")
         new_fellow = self.dojo.add_person("Jeremy Johnson", "staff")
         self.dojo.create_room(["Green"], "livingspace")
-        print_out = self.dojo.reallocate_person(new_fellow.ID, "Green")
+        self.dojo.reallocate_person(new_fellow.ID, "Green")
         output = sys.stdout.getvalue().strip()
-        self.assertEqual(output, \
+        output = output.split("\n")
+        self.assertEqual(output[len(output) - 1], \
                             "Staff cannot be moved to a livingspace")
 
     def test_fellow_office_reallocate(self):
@@ -103,7 +105,8 @@ class TestReallocate(TestCase):
         self.dojo.create_room(["Brown"], "office")
         self.dojo.reallocate_person(new_fellow.ID, "Brown")
         output = sys.stdout.getvalue().strip()
-        self.assertEqual(output, \
+        output = output.split("\n")
+        self.assertEqual(output[len(output) - 1], \
                     "Fellow has been successfully moved to the new office")
 
     def test_staff_office_reallocate(self):
@@ -114,7 +117,8 @@ class TestReallocate(TestCase):
         self.dojo.create_room(["Brown"], "office")
         self.dojo.reallocate_person(new_fellow.ID, "Brown")
         output = sys.stdout.getvalue().strip()
-        self.assertEqual(output, \
+        output = output.split("\n")
+        self.assertEqual(output[len(output) - 1], \
                     "Staff has been successfully moved to the new office")
 
     def test_fellow_livingspace_reallocate(self):
@@ -125,7 +129,8 @@ class TestReallocate(TestCase):
         self.dojo.create_room(["Brown"], "livingspace")
         self.dojo.reallocate_person(new_fellow.ID, "Brown")
         output = sys.stdout.getvalue().strip()
-        self.assertEqual(output, \
+        output = output.split("\n")
+        self.assertEqual(output[len(output) - 1], \
                 "Fellow has been successfully moved to the new livingspace")
 
     def test_fellow_livingspace(self):
@@ -135,7 +140,8 @@ class TestReallocate(TestCase):
         new_fellow = self.dojo.add_person("Jeremy Johnson", "fellow", "N")
         self.dojo.reallocate_person(new_fellow.ID, "Green")
         output = sys.stdout.getvalue().strip()
-        self.assertEqual(output, \
+        output = output.split("\n")
+        self.assertEqual(output[len(output) - 1], \
                     "Fellow does not want a livingspace")
 
     def test_room_full(self):
@@ -149,5 +155,32 @@ class TestReallocate(TestCase):
         new_fellow = self.dojo.add_person("Jeremy Python", "fellow", "Y")
         self.dojo.reallocate_person(new_fellow.ID, "Green")
         output = sys.stdout.getvalue().strip()
-        self.assertEqual(output, \
+        output = output.split("\n")
+        self.assertEqual(output[len(output) - 1], \
                     "The room selected is full")
+
+
+class TestLoadPeople(TestCase):
+    dojo = Dojo()
+    def test_file_exist(self):
+        self.dojo.load_people("people")
+        output = sys.stdout.getvalue().strip()
+        self.assertEqual(output, "File not found")
+
+    def test_load_successful(self):
+        file_content = "OLUWAFEMI SULE FELLOW Y\n\
+                        DOMINIC WALTERS STAFF\n\
+                        SIMON PATTERSON FELLOW Y\n\
+                        MARI LAWRENCE FELLOW Y\n\
+                        LEIGH RILEY STAFF\n\
+                        TANA LOPEZ FELLOW Y\n\
+                        KELLY McGUIRE STAFF"
+        file = open("data/people.txt", "w" )
+        file.write(file_content.upper())
+        file.close()
+        self.dojo.reset()
+        self.dojo.load_people("people")
+        output = sys.stdout.getvalue().strip()
+        self.assertEqual(output, "Operation successful")
+        self.assertEqual(len(self.dojo.staff_list), 3)
+        self.assertEqual(len(self.dojo.fellow_list), 4)

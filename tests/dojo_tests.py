@@ -53,7 +53,8 @@ class TestCreatRoom(TestCase):
         self.ndojo.reset()
         self.ndojo.create_room(["Green", " ", "Black"], "livingspace")
         log = sys.stdout.getvalue().strip()
-        self.assertEqual(log, \
+        log = log.split("\n")
+        self.assertEqual(log[len(log) - 1], \
            "The livingspace at index 1 cannot be created due to empty name.")
 
     def test_invalid_room_type(self):
@@ -69,22 +70,26 @@ class TestCreatRoom(TestCase):
         self.ndojo.create_room(["Green", "Blue"], "office")
         self.ndojo.create_room(["Blue"], "office")
         log = sys.stdout.getvalue().strip()
-        self.assertEqual(log, "The office at index 0 already existed.")
+        log = log.split("\n")
+        self.assertEqual(log[len(log) - 1], "The office at index 0 already existed.")
 
     def test_duplicate_livingspace_name(self):
         """ This function test for creation of duplicate livingspace names """
         self.ndojo.create_room(\
                     ["Brown", "Black", "Black"], "livingspace")
         log = sys.stdout.getvalue().strip()
-        self.assertEqual(log, "The livingspace at index 2 already existed.")
+        log = log.split("\n")
+        self.assertEqual(log[len(log) - 1], "The livingspace at index 2 already existed.")
 
     def test_print_rooms(self):
         """ This function test the printing of names of occupant of a room """
         self.ndojo.reset()
         self.ndojo.create_room(["Brown"], "office")
         self.ndojo.add_person("Hassan El-Saheed", "fellow", "Y")
+        output_1 = sys.stdout.getvalue().strip() + "\n"
         self.ndojo.print_room("Brown")
-        output = sys.stdout.getvalue().strip()
+        output_2 = sys.stdout.getvalue().strip()
+        output = output_2.replace(output_1, "")
         self.assertEqual(output, "BROWN" + "\n" + ("-" * 15) + "\n" + \
                                                 "HASSAN EL-SAHEED")
 
@@ -94,8 +99,10 @@ class TestCreatRoom(TestCase):
         self.ndojo.create_room(["Blue"], "office")
         self.ndojo.add_person("Hassan El-Saheed", "fellow", "Y")
         self.ndojo.add_person("Mike Tyson", "staff")
+        output_1 = sys.stdout.getvalue().strip() + "\n"
         self.ndojo.print_allocation()
-        output = sys.stdout.getvalue().strip()
+        output_2 = sys.stdout.getvalue().strip()
+        output = output_2.replace(output_1, "")
         self.assertEqual(output, "BLUE\n" + \
             "----------------------------\nHASSAN EL-SAHEED, MIKE TYSON")
 

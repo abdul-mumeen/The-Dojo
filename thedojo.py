@@ -85,6 +85,13 @@ class TheDojo (cmd.Cmd):
             new_person.print_me()
 
     @docopt_cmd
+    def do_reallocate_person(self, arg):
+        """Usage: reallocate_person <unique_id> <new_room>"""
+        person_id = arg['<unique_id>']
+        new_room = arg['<new_room>']
+        self.dojo.reallocate_person(person_id, new_room)
+
+    @docopt_cmd
     def do_quit(self, arg):
         """Exits The Dojo."""
         print('=========== Good Bye =============!\n')
