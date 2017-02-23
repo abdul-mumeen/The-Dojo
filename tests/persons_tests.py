@@ -7,7 +7,12 @@ import sys
 
 
 class TestPersons(TestCase):
-    dojo = Dojo()
+    def setUp(self):
+        self.dojo = Dojo()
+
+    def tearDown(self):
+        self.dojo.reset()
+
     def test_add_staff(self):
         """ This function test for successful adding of staff """
         new_staff = self.dojo.add_person("Andy Carroll", "staff")
@@ -43,7 +48,12 @@ class TestPersons(TestCase):
 
 
 class TestReallocate(TestCase):
-    dojo = Dojo()
+    def setUp(self):
+        self.dojo = Dojo()
+
+    def tearDown(self):
+        self.dojo.reset()
+
     def test_empty_valid_id(self):
         """ this function test for empty invalid id"""
         self.dojo.reallocate_person(" ", "Blue")
@@ -76,7 +86,6 @@ class TestReallocate(TestCase):
 
     def test_room_exist(self):
         """ This function test if the room supplied exist"""
-        self.dojo.reset()
         self.dojo.create_room(["Blue"], "office")
         new_fellow = self.dojo.add_person("Jeremy Johnson", "fellow", "Y")
         self.dojo.reallocate_person(new_fellow.ID, "Green")
@@ -87,7 +96,6 @@ class TestReallocate(TestCase):
 
     def test_add_staff_to_livingspace(self):
         """ This function test staff rellocating to livingspace"""
-        self.dojo.reset()
         self.dojo.create_room(["Blue"], "office")
         new_fellow = self.dojo.add_person("Jeremy Johnson", "staff")
         self.dojo.create_room(["Green"], "livingspace")
@@ -99,7 +107,6 @@ class TestReallocate(TestCase):
 
     def test_fellow_office_reallocate(self):
         """ This function test if fellow office reallocation is successful"""
-        self.dojo.reset()
         self.dojo.create_room(["Green"], "office")
         new_fellow = self.dojo.add_person("Jeremy Johnson", "fellow", "N")
         self.dojo.create_room(["Brown"], "office")
@@ -111,7 +118,6 @@ class TestReallocate(TestCase):
 
     def test_staff_office_reallocate(self):
         """ This function test if staff office reallocation is successful"""
-        self.dojo.reset()
         self.dojo.create_room(["Green"], "office")
         new_fellow = self.dojo.add_person("Jeremy Johnson", "staff")
         self.dojo.create_room(["Brown"], "office")
@@ -123,7 +129,6 @@ class TestReallocate(TestCase):
 
     def test_fellow_livingspace_reallocate(self):
         """ This function test if fellow room reallocation is successful"""
-        self.dojo.reset()
         self.dojo.create_room(["Green"], "livingspace")
         new_fellow = self.dojo.add_person("Jeremy Johnson", "fellow", "Y")
         self.dojo.create_room(["Brown"], "livingspace")
@@ -135,7 +140,6 @@ class TestReallocate(TestCase):
 
     def test_fellow_livingspace(self):
         """ This function test if room rellocating to is of the same type"""
-        self.dojo.reset()
         self.dojo.create_room(["Green"], "livingspace")
         new_fellow = self.dojo.add_person("Jeremy Johnson", "fellow", "N")
         self.dojo.reallocate_person(new_fellow.ID, "Green")
@@ -145,7 +149,6 @@ class TestReallocate(TestCase):
                     "Fellow does not want a livingspace")
 
     def test_room_full(self):
-        self.dojo.reset()
         self.dojo.create_room(["Green"], "livingspace")
         new_fellow = self.dojo.add_person("Jeremy Johnson", "fellow", "Y")
         new_fellow = self.dojo.add_person("Jeremy Parker", "fellow", "Y")
@@ -161,7 +164,12 @@ class TestReallocate(TestCase):
 
 
 class TestLoadPeople(TestCase):
-    dojo = Dojo()
+    def setUp(self):
+        self.dojo = Dojo()
+
+    def tearDown(self):
+        self.dojo.reset()
+
     def test_file_exist(self):
         self.dojo.load_people("people")
         output = sys.stdout.getvalue().strip()
@@ -178,7 +186,6 @@ class TestLoadPeople(TestCase):
         file = open("data/people.txt", "w" )
         file.write(file_content.upper())
         file.close()
-        self.dojo.reset()
         self.dojo.load_people("people")
         output = sys.stdout.getvalue().strip()
         self.assertEqual(output, "Operation successful")
