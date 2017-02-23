@@ -7,7 +7,7 @@ import string
 
 
 class Dojo(object):
-    """This is the app main class that calls all the functions"""
+    """This is the app main class that has most functions"""
     def __init__(self):
         self.all_rooms = {}
         self.staff_list = []
@@ -46,6 +46,7 @@ class Dojo(object):
             print(log)
 
     def add_room(self, room_name, room_type):
+        """ This function add the new room to the list of all rooms"""
         new_room = None
         if room_type == "office":
             new_room = Office(room_name)
@@ -263,7 +264,7 @@ class Dojo(object):
                     self.remove_from_allocated(person_id)
                 self.fellow_list[index].livingspace = \
                                     self.all_rooms[new_room_name]
-                self.add_room_to_alloacted(new_room_name)
+                self.add_room_to_allocated(new_room_name)
                 self.allocated[new_room_name].append(self.fellow_list[index])
                 print("Fellow has been successfully " + \
                                     "moved to the new livingspace")
@@ -274,18 +275,18 @@ class Dojo(object):
                 if self.staff_list[index].office != None:
                     self.remove_from_allocated(person_id)
                 self.staff_list[index].office = self.all_rooms[new_room_name]
-                self.add_room_to_alloacted(new_room_name)
+                self.add_room_to_allocated(new_room_name)
                 self.allocated[new_room_name].append(self.staff_list[index])
                 print("Staff has been successfully moved to the new office")
             else:
                 if self.fellow_list[index].livingspace != None:
                     self.remove_from_allocated(person_id)
                 self.fellow_list[index].office = self.all_rooms[new_room_name]
-                self.add_room_to_alloacted(new_room_name)
+                self.add_room_to_allocated(new_room_name)
                 self.allocated[new_room_name].append(self.fellow_list[index])
                 print("Fellow has been successfully moved to the new office")
 
-    def add_room_to_alloacted(self, room_name):
+    def add_room_to_allocated(self, room_name):
         """ this function add a new room to the room allocated list """
         if not room_name in self.allocated:
             self.allocated[room_name] = []
@@ -297,3 +298,48 @@ class Dojo(object):
                 if self.allocated[key][i].ID.upper() == person_id.upper():
                     self.allocated[key].pop(i)
                     return True
+
+    def print_person_list(self, person_list, staff_or_fellow):
+        list_header = ""
+        if staff_or_fellow == "staff":
+            person_list = self.staff_list
+            list_header = "Staff List\n"
+        else:
+            person_list = self.fellow_list
+            list_header = "Fellow List\n"
+
+        list_header += "ID\tNAME\t\t\tOFFICE NAME\tLIVINGSPACE\n"
+        print_out = list_header + ("-" * 70) + "\n"
+        for person in person_list:
+            office_name = person.office.name if person.office is not None \
+                                                                    else ""
+            livingspace_name = person.livingspace.name \
+                                if staff_or_fellow == "fellow" and \
+                                        person.livingspace is not None else ""
+            print_out += "{}\t{}\t{}\t{}\n".format(person.ID, \
+                                person.name.upper(), office_name.upper(), \
+                                                    livingspace_name.upper())
+        if len(print_out) > 125:
+            print(print_out)
+        else:
+            print("This list is empty")
+
+    def load_people(self, file_name):
+        try:
+            file = open("data/{}.txt".format(file_name), "r")
+            content = file.read()
+            file.close()
+
+            content = content.split("\n")
+            for person_detail in content:
+                if person_detail.strip() != "":
+                    person_detail = person_detail.strip().split()
+                    name = person_detail[0] + person_detail[1]
+                    if len(person_detail) == 3:
+                        self.add_person(name, person_detail[2])
+                    else:
+                        self.add_person(name, person_detail[2], \
+                                                            person_detail[3])
+            print("Operation successful")
+        except:
+            print("File not found")
