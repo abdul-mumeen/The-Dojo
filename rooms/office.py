@@ -4,5 +4,4 @@ class Office(Rooms):
     """This office class inherits from the room class"""
     def __init__(self, name):
         super().__init__(name)
-        self.totalSpace = 6
-        
+        self.total_space = 6

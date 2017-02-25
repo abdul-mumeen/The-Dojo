@@ -2,6 +2,7 @@ from persons.staffs import Staff
 from persons.fellows import Fellow
 from rooms.office import Office
 from rooms.livingspace import LivingSpace
+from data.database import DB
 import random
 import string
 
@@ -86,7 +87,7 @@ class Dojo(object):
         while calling the allocate function to allocate room.
         """
         new_fellow = Fellow(name, "fellow")
-        new_fellow.generate_id("fellow", self.fellow_list)
+        new_fellow.generate_id(self.fellow_list)
         new_fellow.office = self.allocate_room(new_fellow, Office)
         if accommodation.upper() == "Y":
             new_fellow.livingspace = self.allocate_room(new_fellow, \
@@ -101,7 +102,7 @@ class Dojo(object):
         while calling the allocate function to allocate room.
         """
         new_staff = Staff(name, "staff")
-        new_staff.generate_id("staff", self.staff_list)
+        new_staff.generate_id(self.staff_list)
         new_staff.office = self.allocate_room(new_staff, Office)
         self.staff_list.append(new_staff)
         return new_staff
@@ -343,3 +344,14 @@ class Dojo(object):
             print("Operation successful")
         except:
             print("File not found")
+
+    def save_state(self, db_name):
+        if db_name == None:
+            db_name = ""
+        new_db = DB()
+        room_list = []
+        for room in self.all_rooms:
+            room_list.append(self.all_rooms[room])
+        person_list = self.staff_list + self.fellow_list
+        log = new_db.save_state(db_name, room_list, person_list)
+        print(log)
