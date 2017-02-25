@@ -92,8 +92,20 @@ class TheDojo (cmd.Cmd):
         self.dojo.reallocate_person(person_id, new_room)
 
     @docopt_cmd
+    def do_load_people(self, arg):
+        """Usage: load_people <file_name>"""
+        self.dojo.load_people(arg['<file_name>'])
+
+    @docopt_cmd
+    def do_print_people(self, arg):
+        """Usage: print_people (fellow | staff)"""
+        fellow = arg['fellow']
+        designation = "fellow" if fellow else "staff"
+        self.dojo.print_person_list(designation)
+
+    @docopt_cmd
     def do_quit(self, arg):
-        """Exits The Dojo."""
+        """Usage: quit"""
         print('=========== Good Bye =============!\n')
         exit()
 

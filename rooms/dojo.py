@@ -147,7 +147,7 @@ class Dojo(object):
                 self.unallocated["office"].append(person)
             else:
                 self.unallocated["livingspace"].append(person)
-            return ""
+            return None
 
     def print_room(self, room_name):
         """"
@@ -299,7 +299,7 @@ class Dojo(object):
                     self.allocated[key].pop(i)
                     return True
 
-    def print_person_list(self, person_list, staff_or_fellow):
+    def print_person_list(self, staff_or_fellow):
         list_header = ""
         if staff_or_fellow == "staff":
             person_list = self.staff_list
@@ -312,11 +312,11 @@ class Dojo(object):
         print_out = list_header + ("-" * 70) + "\n"
         for person in person_list:
             office_name = person.office.name if person.office is not None \
-                                                                    else ""
+                                                                    else "-"
             livingspace_name = person.livingspace.name \
                                 if staff_or_fellow == "fellow" and \
-                                        person.livingspace is not None else ""
-            print_out += "{}\t{}\t{}\t{}\n".format(person.ID, \
+                                        person.livingspace is not None else "-"
+            print_out += "{}\t{}\t\t{}\t{}\n".format(person.ID, \
                                 person.name.upper(), office_name.upper(), \
                                                     livingspace_name.upper())
         if len(print_out) > 125:
@@ -334,7 +334,7 @@ class Dojo(object):
             for person_detail in content:
                 if person_detail.strip() != "":
                     person_detail = person_detail.strip().split()
-                    name = person_detail[0] + person_detail[1]
+                    name = person_detail[0] + " " + person_detail[1]
                     if len(person_detail) == 3:
                         self.add_person(name, person_detail[2])
                     else:
