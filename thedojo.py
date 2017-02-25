@@ -104,6 +104,12 @@ class TheDojo (cmd.Cmd):
         self.dojo.print_person_list(designation)
 
     @docopt_cmd
+    def do_save_state(self, arg):
+        """Usage: save_state [--db=sqlite_database]"""
+        db_name = arg['--db']
+        self.dojo.save_state(db_name)
+
+    @docopt_cmd
     def do_quit(self, arg):
         """Usage: quit"""
         print('=========== Good Bye =============!\n')
