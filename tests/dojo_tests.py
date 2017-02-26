@@ -279,6 +279,7 @@ class TestReallocate(TestCase):
                     "Fellow does not want a livingspace")
 
     def test_room_full(self):
+        """ This function test when a room is full"""
         self.dojo.create_room(["Green"], "livingspace")
         new_fellow = self.dojo.add_person("Jeremy Johnson", "fellow", "Y")
         new_fellow = self.dojo.add_person("Jeremy Parker", "fellow", "Y")
@@ -303,6 +304,7 @@ class TestLoadPeople(TestCase):
             os.remove("data/people.txt")
 
     def test_file_empty(self):
+        """ This function test if the file supplied is empty """
         file_content = ""
         file = open("data/people.txt", "w" )
         file.write(file_content.upper())
@@ -314,6 +316,7 @@ class TestLoadPeople(TestCase):
                                                 "The file selected is empty")
 
     def test_invalid_content(self):
+        """ This function test if the file supplied contains invalid input """
         file_content = "OLUWAFEMI SULE FELLOW Y\n\
                         DOMINIC WALTERS STAFF Y\n\
                         SIMON PATTERSON FELLOW Y\n"
@@ -329,6 +332,7 @@ class TestLoadPeople(TestCase):
                     "Some people on the list have been successfully loaded")
 
     def test_load_successful(self):
+        """ This function test file loaded successfully """
         file_content = "OLUWAFEMI SULE FELLOW Y\n\
                         DOMINIC WALTERS STAFF\n\
                         SIMON PATTERSON FELLOW Y\n\
@@ -348,6 +352,7 @@ class TestLoadPeople(TestCase):
         self.assertEqual(len(self.dojo.fellow_list), 4)
 
     def test_file_exist(self):
+        """ This function test file existing or not"""
         self.dojo.load_people("people")
         output = sys.stdout.getvalue().strip()
         output = output.split("\n")
@@ -358,12 +363,25 @@ class TestDatabase(TestCase):
         self.dojo = Dojo()
         self.dojo.create_room(["Blue", "Green"], "office")
         self.dojo.create_room(["Black", "Brown"], "livingspace")
+        file_content = "OLUWAFEMI SULE FELLOW Y\n\
+                        DOMINIC WALTERS STAFF\n\
+                        SIMON PATTERSON FELLOW Y\n\
+                        MARI LAWRENCE FELLOW Y\n\
+                        LEIGH RILEY STAFF\n\
+                        TANA LOPEZ FELLOW Y\n\
+                        KELLY McGUIRE STAFF"
+        file = open("data/people.txt", "w" )
+        file.write(file_content.upper())
+        file.close()
         self.dojo.load_people("people")
 
     def tearDown(self):
         self.dojo.reset()
+        if os.path.isfile("data/pressure.sqlite"):
+            os.remove("data/pressure.sqlite")
 
     def test_save_state_named(self):
+        """ This function test saving state with the name supplied """
         self.dojo.save_state("pressure")
         output = sys.stdout.getvalue().strip()
         output = output.split("\n")
@@ -377,8 +395,28 @@ class TestDatabase(TestCase):
                                     " existed! Kindly choose another name.")
 
     def test_save_state_unnamed(self):
+        """ This function test saving state with the name generated """
         self.dojo.save_state("")
         output = sys.stdout.getvalue().strip()
         output = output.split("\n")
         self.assertGreaterEqual(output[len(output) - 1], "The state has " + \
                                 "been successfully saved with 2017.sqlite")
+
+    def test_load_state_file_not_exist(self):
+        self.dojo.load_state("pressure")
+        output = sys.stdout.getvalue().strip()
+        output = output.split("\n")
+        self.assertEqual(output[len(output) - 1], "File not found")
+
+    def test_load_state_file_exist(self):
+        self.dojo.save_state("pressure")
+        self.dojo.reset()
+        self.dojo.load_state("pressure")
+        output = sys.stdout.getvalue().strip()
+        output = output.split("\n")
+        self.assertEqual(output[len(output) - 1], \
+                "The database pressure.sqlite has been successfully loaded")
+        self.assertEqual(len(self.dojo.staff_list), 3)
+        self.assertEqual(len(self.dojo.fellow_list), 4)
+        self.assertEqual(len(self.dojo.all_rooms), 4)
+        self.assertTrue("Green" in self.all_rooms)

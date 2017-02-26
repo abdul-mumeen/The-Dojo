@@ -157,12 +157,16 @@ class Dojo(object):
         members of the passed room
         """
         print_out = ""
-        if room_name in self.allocated:
-            for person in self.allocated[room_name]:
-                print_out += person.name.upper() + "\n"
+        if room_name.title() in self.all_rooms:
+            if room_name in self.allocated:
+                for person in self.allocated[room_name]:
+                    print_out += person.name.upper() + "\n"
+            else:
+                print_out = "No allocation to this room"
+            print_out = room_name.upper() + "\n" + ("-" * 15) + "\n" + \
+                                                                    print_out
         else:
-            print_out = "No allocation to this room"
-        print_out = room_name.upper() + "\n" + ("-" * 15) + "\n" + print_out
+            print_out = "No such room as " + room_name
         print(print_out)
 
     def print_allocation(self, file_name=None):
