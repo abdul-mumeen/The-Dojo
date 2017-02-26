@@ -5,6 +5,7 @@ from rooms.livingspace import LivingSpace
 from data.database import DB
 import random
 import string
+import os
 
 
 class Dojo(object):
@@ -326,23 +327,37 @@ class Dojo(object):
             print("This list is empty")
 
     def load_people(self, file_name):
-        try:
+        if os.path.isfile("data/{}.txt".format(file_name)):
             file = open("data/{}.txt".format(file_name), "r")
             content = file.read()
             file.close()
-
-            content = content.split("\n")
-            for person_detail in content:
-                if person_detail.strip() != "":
-                    person_detail = person_detail.strip().split()
-                    name = person_detail[0] + " " + person_detail[1]
-                    if len(person_detail) == 3:
-                        self.add_person(name, person_detail[2])
-                    else:
-                        self.add_person(name, person_detail[2], \
+            if content.strip() != "":
+                content = content.split("\n")
+                line = 1
+                error = False
+                for person_detail in content:
+                    if person_detail.strip() != "":
+                        person_detail = person_detail.strip().split()
+                        name = person_detail[0] + " " + person_detail[1]
+                        if len(person_detail) == 3:
+                            person = self.add_person(name, person_detail[2])
+                            if person == None:
+                                print("line {} was not loaded because of " + \
+                                    "the above^^ reason".format(line))
+                                error = True
+                        else:
+                            person = self.add_person(name, person_detail[2], \
                                                             person_detail[3])
-            print("Operation successful")
-        except:
+                            if person == None:
+                                print("line {} was not loaded because of " + \
+                                    "the above^^ reason".format(line))
+                                error = True
+                    line += 1
+                load_ran = "Everyone" if not error else "Some people"
+                print(load_ran, "on the list have been successfully loaded")
+            else:
+                print("The file selected is empty")
+        else:
             print("File not found")
 
     def save_state(self, db_name):

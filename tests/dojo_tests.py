@@ -4,6 +4,7 @@ from persons.staffs import Staff
 from persons.fellows import Fellow
 from persons.persons import Person
 import sys
+import os
 
 
 class TestCreatRoom(TestCase):
@@ -298,11 +299,34 @@ class TestLoadPeople(TestCase):
 
     def tearDown(self):
         self.dojo.reset()
+        if os.path.isfile("data/people.txt"):
+            os.remove("data/people.txt")
 
-    def test_file_exist(self):
+    def test_file_empty(self):
+        file_content = ""
+        file = open("data/people.txt", "w" )
+        file.write(file_content.upper())
+        file.close()
         self.dojo.load_people("people")
         output = sys.stdout.getvalue().strip()
-        self.assertEqual(output, "File not found")
+        output = output.split("\n")
+        self.assertEqual(output[len(output) - 1], \
+                                                "The file selected is empty")
+
+    def test_invalid_content(self):
+        file_content = "OLUWAFEMI SULE FELLOW Y\n\
+                        DOMINIC WALTERS STAFF Y\n\
+                        SIMON PATTERSON FELLOW Y\n"
+        file = open("data/people.txt", "w" )
+        file.write(file_content.upper())
+        file.close()
+        self.dojo.load_people("people")
+        output = sys.stdout.getvalue().strip()
+        output = output.split("\n")
+        self.assertEqual(output[len(output) - 3], \
+                    "Staff cannot request for a livingspace!")
+        self.assertEqual(output[len(output) - 1], \
+                    "Some people on the list have been successfully loaded")
 
     def test_load_successful(self):
         file_content = "OLUWAFEMI SULE FELLOW Y\n\
@@ -317,6 +341,44 @@ class TestLoadPeople(TestCase):
         file.close()
         self.dojo.load_people("people")
         output = sys.stdout.getvalue().strip()
-        self.assertEqual(output, "Operation successful")
+        output = output.split("\n")
+        self.assertEqual(output[len(output) - 1], \
+                        "Everyone on the list have been successfully loaded")
         self.assertEqual(len(self.dojo.staff_list), 3)
         self.assertEqual(len(self.dojo.fellow_list), 4)
+
+    def test_file_exist(self):
+        self.dojo.load_people("people")
+        output = sys.stdout.getvalue().strip()
+        output = output.split("\n")
+        self.assertEqual(output[len(output) - 1], "File not found")
+
+class TestDatabase(TestCase):
+    def setUp(self):
+        self.dojo = Dojo()
+        self.dojo.create_room(["Blue", "Green"], "office")
+        self.dojo.create_room(["Black", "Brown"], "livingspace")
+        self.dojo.load_people("people")
+
+    def tearDown(self):
+        self.dojo.reset()
+
+    def test_save_state_named(self):
+        self.dojo.save_state("pressure")
+        output = sys.stdout.getvalue().strip()
+        output = output.split("\n")
+        self.assertEqual(output[len(output) - 1], "The state has been " + \
+                                    "successfully saved with pressure.sqlite")
+        self.assertTrue(os.path.isfile("data/pressure.sqlite"))
+        self.dojo.save_state("pressure")
+        output = sys.stdout.getvalue().strip()
+        output = output.split("\n")
+        self.assertEqual(output[len(output) - 1], "Database name already" + \
+                                    " existed! Kindly choose another name.")
+
+    def test_save_state_unnamed(self):
+        self.dojo.save_state("")
+        output = sys.stdout.getvalue().strip()
+        output = output.split("\n")
+        self.assertGreaterEqual(output[len(output) - 1], "The state has " + \
+                                "been successfully saved with 2017.sqlite")

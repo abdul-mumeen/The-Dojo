@@ -15,8 +15,8 @@ class DB(object):
         if db_name.strip() == "":
             db_name = self.generate_name()
         if self.db_exist(db_name):
-            return "Database name already existed!\
-                                    \nKindly choose another name."
+            return "Database name already existed!" + \
+                                    " Kindly choose another name."
         else:
             sqlite_file = "data/{}.sqlite".format(db_name)
             conn = sqlite3.connect(sqlite_file)
@@ -71,7 +71,8 @@ class DB(object):
 
     def generate_name(self):
         i = datetime.datetime.now()
-        db_name = i.year + i.month + i.day + i.hour + i.minute + i.second
+        db_name = str(i.year) + str(i.month) + str(i.day) + str(i.hour) \
+                                            + str(i.minute) + str(i.second)
         while self.db_exist(db_name):
             db_name = str(int(db_name) + 1)
         return db_name
