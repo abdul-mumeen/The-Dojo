@@ -1,7 +1,11 @@
 import random
 import string
+
+
 class Person(object):
+
     """This is the base class for staff and fellow"""
+
     def __init__(self, name, designation):
         self.name = name
         self.ID = ""
@@ -21,21 +25,21 @@ class Person(object):
         id_exist = True
         person_id = ""
         while id_exist:
-            person_id = prefix + ''.join(\
-                    random.choice(string.ascii_uppercase + string.digits)
-                                  for _ in range(5))
+            person_id = prefix + ''\
+                .join(random.choice(string.ascii_uppercase + string.digits)
+                      for _ in range(5))
             if not (person_id in self.get_existing_id(person_list)):
                 id_exist = False
             self.ID = person_id
 
     def print_me(self):
         first_name = self.name.split()[0].title()
-        print("{} {} has been successfully added.".format(\
-                                    self.designation.title(), \
-                                            self.name.title()))
+        print("{} {} has been successfully added.".format(
+                                    self.designation.title(),
+                                    self.name.title()))
         if self.office:
-            print("{} has been allocated the office {}".format(\
+            print("{} has been allocated the office {}".format(
                             first_name, self.office.name.title()))
         else:
-            print("{} has been placed".format(first_name) + \
-                                " on a waiting list for office")
+            print("{} has been placed".format(first_name) +
+                  " on a waiting list for office")

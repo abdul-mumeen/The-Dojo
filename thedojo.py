@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 
-import sys
 import cmd
 from docopt import docopt, DocoptExit
 from rooms.dojo import Dojo
@@ -72,15 +71,15 @@ class TheDojo (cmd.Cmd):
     @docopt_cmd
     def do_add_person(self, arg):
         """Usage: add_person <first_name> <last_name> (fellow | staff) \
-                                                [<wants_accommodation>]"""
+        [<wants_accommodation>]"""
         fname = arg['<first_name>']
         lname = arg['<last_name>']
         fellow = arg['fellow']
         designation = "fellow" if fellow else "staff"
-        accommodation =arg['<wants_accommodation>']
+        accommodation = arg['<wants_accommodation>']
         accommodation = "N" if not accommodation else accommodation
-        new_person = self.dojo.add_person(fname + " " + lname, \
-                                                designation, accommodation)
+        new_person = self.dojo.add_person(fname + " " + lname,
+                                          designation, accommodation)
         if new_person:
             new_person.print_me()
 
@@ -115,5 +114,5 @@ class TheDojo (cmd.Cmd):
         print('=========== Good Bye =============!\n')
         exit()
 
+
 TheDojo().cmdloop()
-print(opt)
