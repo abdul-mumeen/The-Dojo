@@ -45,14 +45,16 @@ class TestCreatRoom(TestCase):
         """ This function test for empty room name and room type inputs """
         self.ndojo.create_room([], "  ")
         log = sys.stdout.getvalue().strip()
-        self.assertEqual(log, \
+        self.assertEqual(
+            log,
             "Cannot create rooms with empty room name and/or empty room type")
 
     def test_invalid_room_input(self):
         """ This function test for empty room name"""
         self.ndojo.create_room([" "], "office")
         log = sys.stdout.getvalue().strip()
-        self.assertEqual(log, \
+        self.assertEqual(
+            log,
             "The office at index 0 cannot be created due to empty name.")
 
     def test_invalid_in_array_input(self):
@@ -60,14 +62,16 @@ class TestCreatRoom(TestCase):
         self.ndojo.create_room(["Green", " ", "Black"], "livingspace")
         log = sys.stdout.getvalue().strip()
         log = log.split("\n")
-        self.assertEqual(log[len(log) - 1], \
-           "The livingspace at index 1 cannot be created due to empty name.")
+        self.assertEqual(
+            log[len(log) - 1],
+            "The livingspace at index 1 cannot be created due to empty name.")
 
     def test_invalid_room_type(self):
         """ This function test for invalid room type """
         self.ndojo.create_room(["Green", "Black"], "piper")
         log = sys.stdout.getvalue().strip()
-        self.assertEqual(log, \
+        self.assertEqual(
+            log,
             "Cannot create room(s), invalid room type enterred")
 
     def test_duplicate_office_name(self):
@@ -76,15 +80,17 @@ class TestCreatRoom(TestCase):
         self.ndojo.create_room(["Blue"], "office")
         log = sys.stdout.getvalue().strip()
         log = log.split("\n")
-        self.assertEqual(log[len(log) - 1], "The office at index 0 already existed.")
+        self.assertEqual(
+            log[len(log) - 1], "The office at index 0 already existed.")
 
     def test_duplicate_livingspace_name(self):
         """ This function test for creation of duplicate livingspace names """
-        self.ndojo.create_room(\
+        self.ndojo.create_room(
                     ["Brown", "Black", "Black"], "livingspace")
         log = sys.stdout.getvalue().strip()
         log = log.split("\n")
-        self.assertEqual(log[len(log) - 1], "The livingspace at index 2 already existed.")
+        self.assertEqual(
+            log[len(log) - 1], "The livingspace at index 2 already existed.")
 
     def test_print_rooms(self):
         """ This function test the printing of names of occupant of a room """
@@ -94,8 +100,8 @@ class TestCreatRoom(TestCase):
         self.ndojo.print_room("Brown")
         output_2 = sys.stdout.getvalue().strip()
         output = output_2.replace(output_1, "")
-        self.assertEqual(output, "BROWN" + "\n" + ("-" * 15) + "\n" + \
-                                                "HASSAN EL-SAHEED")
+        self.assertEqual(output, "BROWN" + "\n" + ("-" * 15) + "\n" +
+                         "HASSAN EL-SAHEED")
 
     def test_print_allocation_to_screen(self):
         """ This function test the printing of allocated persons to screen"""
@@ -106,7 +112,8 @@ class TestCreatRoom(TestCase):
         self.ndojo.print_allocation()
         output_2 = sys.stdout.getvalue().strip()
         output = output_2.replace(output_1, "")
-        self.assertEqual(output, "BLUE\n" + \
+        self.assertEqual(
+            output, "BLUE\n" +
             "----------------------------\nHASSAN EL-SAHEED, MIKE TYSON")
 
     def test_print_allocation_to_file(self):
@@ -134,7 +141,8 @@ class TestCreatRoom(TestCase):
         file = open("data/test_file.txt", "r")
         names = file.readlines()
         file.close()
-        self.assertEqual(names[2],"MIKE TYSON - NO OFFICE\n")
+        self.assertEqual(names[2], "MIKE TYSON - NO OFFICE\n")
+
 
 class TestAddPersons(TestCase):
     def setUp(self):
@@ -160,21 +168,21 @@ class TestAddPersons(TestCase):
 
     def test_add_person_invalid_input_1(self):
         """ This function checks for invalid inputs """
-        new_staff = self.dojo.add_person("Andy Carroll", "staff", "Y")
+        self.dojo.add_person("Andy Carroll", "staff", "Y")
         output = sys.stdout.getvalue().strip()
         self.assertEqual(output, "Staff cannot request for a livingspace!")
 
     def test_add_person_invalid_input_2(self):
-        new_staff = self.dojo.add_person("  ", "staff")
+        self.dojo.add_person("  ", "staff")
         output = sys.stdout.getvalue().strip()
-        self.assertEqual(output, \
-                    "Person cannot be created with an empty name!")
+        self.assertEqual(output,
+                         "Person cannot be created with an empty name!")
 
     def test_add_person_invalid_input_3(self):
-        new_staff = self.dojo.add_person("Samora Dake", "type", "Y")
+        self.dojo.add_person("Samora Dake", "type", "Y")
         output = sys.stdout.getvalue().strip()
-        self.assertEqual(output, \
-                    "Person cannot be created due to invalid designation!")
+        self.assertEqual(
+            output, "Person cannot be created due to invalid designation!")
 
 
 class TestReallocate(TestCase):
@@ -223,7 +231,6 @@ class TestReallocate(TestCase):
         output = output.split("\n")
         self.assertEqual(output[len(output) - 1], "Room not found")
 
-
     def test_add_staff_to_livingspace(self):
         """ This function test staff rellocating to livingspace"""
         self.dojo.create_room(["Blue"], "office")
@@ -232,8 +239,8 @@ class TestReallocate(TestCase):
         self.dojo.reallocate_person(new_fellow.ID, "Green")
         output = sys.stdout.getvalue().strip()
         output = output.split("\n")
-        self.assertEqual(output[len(output) - 1], \
-                            "Staff cannot be moved to a livingspace")
+        self.assertEqual(output[len(output) - 1],
+                         "Staff cannot be moved to a livingspace")
 
     def test_fellow_office_reallocate(self):
         """ This function test if fellow office reallocation is successful"""
@@ -243,8 +250,9 @@ class TestReallocate(TestCase):
         self.dojo.reallocate_person(new_fellow.ID, "Brown")
         output = sys.stdout.getvalue().strip()
         output = output.split("\n")
-        self.assertEqual(output[len(output) - 1], \
-                    "Fellow has been successfully moved to the new office")
+        self.assertEqual(
+            output[len(output) - 1],
+            "Fellow has been successfully moved to the new office")
 
     def test_staff_office_reallocate(self):
         """ This function test if staff office reallocation is successful"""
@@ -254,8 +262,9 @@ class TestReallocate(TestCase):
         self.dojo.reallocate_person(new_fellow.ID, "Brown")
         output = sys.stdout.getvalue().strip()
         output = output.split("\n")
-        self.assertEqual(output[len(output) - 1], \
-                    "Staff has been successfully moved to the new office")
+        self.assertEqual(
+            output[len(output) - 1],
+            "Staff has been successfully moved to the new office")
 
     def test_fellow_livingspace_reallocate(self):
         """ This function test if fellow room reallocation is successful"""
@@ -265,7 +274,8 @@ class TestReallocate(TestCase):
         self.dojo.reallocate_person(new_fellow.ID, "Brown")
         output = sys.stdout.getvalue().strip()
         output = output.split("\n")
-        self.assertEqual(output[len(output) - 1], \
+        self.assertEqual(
+                output[len(output) - 1],
                 "Fellow has been successfully moved to the new livingspace")
 
     def test_fellow_livingspace(self):
@@ -275,8 +285,8 @@ class TestReallocate(TestCase):
         self.dojo.reallocate_person(new_fellow.ID, "Green")
         output = sys.stdout.getvalue().strip()
         output = output.split("\n")
-        self.assertEqual(output[len(output) - 1], \
-                    "Fellow does not want a livingspace")
+        self.assertEqual(
+            output[len(output) - 1], "Fellow does not want a livingspace")
 
     def test_room_full(self):
         """ This function test when a room is full"""
@@ -290,8 +300,8 @@ class TestReallocate(TestCase):
         self.dojo.reallocate_person(new_fellow.ID, "Green")
         output = sys.stdout.getvalue().strip()
         output = output.split("\n")
-        self.assertEqual(output[len(output) - 1], \
-                    "The room selected is full")
+        self.assertEqual(
+            output[len(output) - 1], "The room selected is full")
 
 
 class TestLoadPeople(TestCase):
@@ -306,30 +316,31 @@ class TestLoadPeople(TestCase):
     def test_file_empty(self):
         """ This function test if the file supplied is empty """
         file_content = ""
-        file = open("data/people.txt", "w" )
+        file = open("data/people.txt", "w")
         file.write(file_content.upper())
         file.close()
         self.dojo.load_people("people")
         output = sys.stdout.getvalue().strip()
         output = output.split("\n")
-        self.assertEqual(output[len(output) - 1], \
-                                                "The file selected is empty")
+        self.assertEqual(
+            output[len(output) - 1], "The file selected is empty")
 
     def test_invalid_content(self):
         """ This function test if the file supplied contains invalid input """
         file_content = "OLUWAFEMI SULE FELLOW Y\n\
                         DOMINIC WALTERS STAFF Y\n\
                         SIMON PATTERSON FELLOW Y\n"
-        file = open("data/people.txt", "w" )
+        file = open("data/people.txt", "w")
         file.write(file_content.upper())
         file.close()
         self.dojo.load_people("people")
         output = sys.stdout.getvalue().strip()
         output = output.split("\n")
-        self.assertEqual(output[len(output) - 3], \
-                    "Staff cannot request for a livingspace!")
-        self.assertEqual(output[len(output) - 1], \
-                    "Some people on the list have been successfully loaded")
+        self.assertEqual(
+            output[len(output) - 3], "Staff cannot request for a livingspace!")
+        self.assertEqual(
+            output[len(output) - 1],
+            "Some people on the list have been successfully loaded")
 
     def test_load_successful(self):
         """ This function test file loaded successfully """
@@ -340,14 +351,15 @@ class TestLoadPeople(TestCase):
                         LEIGH RILEY STAFF\n\
                         TANA LOPEZ FELLOW Y\n\
                         KELLY McGUIRE STAFF"
-        file = open("data/people.txt", "w" )
+        file = open("data/people.txt", "w")
         file.write(file_content.upper())
         file.close()
         self.dojo.load_people("people")
         output = sys.stdout.getvalue().strip()
         output = output.split("\n")
-        self.assertEqual(output[len(output) - 1], \
-                        "Everyone on the list have been successfully loaded")
+        self.assertEqual(
+                output[len(output) - 1],
+                "Everyone on the list have been successfully loaded")
         self.assertEqual(len(self.dojo.staff_list), 3)
         self.assertEqual(len(self.dojo.fellow_list), 4)
 
@@ -357,6 +369,7 @@ class TestLoadPeople(TestCase):
         output = sys.stdout.getvalue().strip()
         output = output.split("\n")
         self.assertEqual(output[len(output) - 1], "File not found")
+
 
 class TestDatabase(TestCase):
     def setUp(self):
@@ -370,7 +383,7 @@ class TestDatabase(TestCase):
                         LEIGH RILEY STAFF\n\
                         TANA LOPEZ FELLOW Y\n\
                         KELLY McGUIRE STAFF"
-        file = open("data/people.txt", "w" )
+        file = open("data/people.txt", "w")
         file.write(file_content.upper())
         file.close()
         self.dojo.load_people("people")
@@ -385,21 +398,21 @@ class TestDatabase(TestCase):
         self.dojo.save_state("pressure")
         output = sys.stdout.getvalue().strip()
         output = output.split("\n")
-        self.assertEqual(output[len(output) - 1], "The state has been " + \
-                                    "successfully saved with pressure.sqlite")
+        self.assertEqual(output[len(output) - 1], "The state has been " +
+                         "successfully saved with pressure.sqlite")
         self.assertTrue(os.path.isfile("data/pressure.sqlite"))
         self.dojo.save_state("pressure")
         output = sys.stdout.getvalue().strip()
         output = output.split("\n")
-        self.assertEqual(output[len(output) - 1], "Database name already" + \
-                                    " existed! Kindly choose another name.")
+        self.assertEqual(output[len(output) - 1], "Database name already" +
+                         " existed! Kindly choose another name.")
 
     def test_save_state_unnamed(self):
         """ This function test saving state with the name generated """
         self.dojo.save_state("")
         output = sys.stdout.getvalue().strip()
         output = output.split("\n")
-        self.assertGreaterEqual(output[len(output) - 1], "The state has " + \
+        self.assertGreaterEqual(output[len(output) - 1], "The state has " +
                                 "been successfully saved with 2017.sqlite")
 
     def test_load_state_file_not_exist(self):
@@ -414,8 +427,9 @@ class TestDatabase(TestCase):
         self.dojo.load_state("pressure")
         output = sys.stdout.getvalue().strip()
         output = output.split("\n")
-        self.assertEqual(output[len(output) - 1], \
-                "The database pressure.sqlite has been successfully loaded")
+        self.assertEqual(
+            output[len(output) - 1],
+            "The database pressure.sqlite has been successfully loaded")
         self.assertEqual(len(self.dojo.staff_list), 3)
         self.assertEqual(len(self.dojo.fellow_list), 4)
         self.assertEqual(len(self.dojo.all_rooms), 4)

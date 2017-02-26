@@ -1,6 +1,6 @@
-from rooms.rooms import Rooms
+from rooms.rooms import Room
 
-class LivingSpace(Rooms):
+
+class LivingSpace(Room):
     """This livingspace class inherits from the room class"""
-    def __init__(self, name):
-        super().__init__(name)
+    pass

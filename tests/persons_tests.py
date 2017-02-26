@@ -1,9 +1,7 @@
 from unittest import TestCase
 from rooms.dojo import Dojo
-from persons.staffs import Staff
 from persons.fellows import Fellow
 from persons.persons import Person
-import sys
 
 
 class TestPersonClass(TestCase):
@@ -34,7 +32,7 @@ class TestPersonClass(TestCase):
         self.assertEqual(new_fellow.ID[0], "F")
         self.assertNotEqual(new_fellow.ID, self.new_fellow.ID)
 
-    def test_generate_id_fellow(self):
+    def test_generate_id_staff(self):
         """ This function test for successful generation of staff id """
         new_staff = Person("Chigozie Oluwatomi", "staff")
         new_staff.generate_id(self.dojo.staff_list)

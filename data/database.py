@@ -1,6 +1,7 @@
 import os
 import datetime
 import sqlite3
+
 from persons.staffs import Staff
 from persons.fellows import Fellow
 from rooms.office import Office
@@ -8,9 +9,6 @@ from rooms.livingspace import LivingSpace
 
 
 class DB(object):
-    def __init__(self):
-        pass
-
     def save_state(self, db_name, room_list, person_list):
         if db_name.strip() == "":
             db_name = self.generate_name()
@@ -24,7 +22,6 @@ class DB(object):
             c.execute("CREATE TABLE room_table (name TEXT PRIMARY KEY, \
                                             type TEXT, capacity INTEGER)")
 
-
             c.execute("CREATE TABLE person_table (id TEXT PRIMARY KEY,\
                                 name TEXT, designation TEXT, office TEXT)")
 
@@ -36,7 +33,7 @@ class DB(object):
             conn.commit()
             conn.close()
             return "The state has been successfully saved with %s.sqlite" \
-                                                                    %db_name
+                   % db_name
 
     def insert_rooms(self, room_list, c):
         for room in room_list:
@@ -44,24 +41,26 @@ class DB(object):
                 room_type = "office" if isinstance(room, Office) \
                                                         else "livingspace"
                 c.execute("INSERT INTO room_table (name, type, capacity) \
-                            VALUES ('{}', '{}', '{}')".format(\
-                                    room.name, room_type, room.total_space))
+                          VALUES ('{}', '{}', '{}')".format(
+                                room.name, room_type, room.total_space))
             except sqlite3.IntegrityError:
                 print('ERROR: failed to insert room {}'.format(room.name))
 
     def insert_people(self, person_list, c):
         for person in person_list:
             office = person.office.name if person.office is not None else ""
-            c.execute("INSERT INTO person_table (id, name, designation, \
-                office) VALUES ('{}', '{}', '{}', '{}')".format(person.ID, \
-                                    person.name, person.designation, office))
+            c.execute(
+                "INSERT INTO person_table (id, name, designation, " +
+                "office) VALUES ('{}', '{}', '{}', '{}')".format(
+                    person.ID, person.name, person.designation, office))
             if person.designation.lower() == "fellow":
-                LivingSpace = person.livingspace.name if \
+                livingSpace = person.livingspace.name if \
                                 person.livingspace is not None else ""
                 c.execute("INSERT INTO livingspace_table (id, \
                         wants_accommodation, livingspace) VALUES \
-                            ('{}', '{}', '{}')".format(person.ID, \
-                                person.wants_accommodation, LivingSpace))
+                            ('{}', '{}', '{}')".format(
+                            person.ID,
+                            person.wants_accommodation, livingSpace))
 
     def db_exist(self, db_name):
         if os.path.isfile("data/{}.sqlite".format(db_name)):
@@ -72,7 +71,7 @@ class DB(object):
     def generate_name(self):
         i = datetime.datetime.now()
         db_name = str(i.year) + str(i.month) + str(i.day) + str(i.hour) \
-                                            + str(i.minute) + str(i.second)
+            + str(i.minute) + str(i.second)
         while self.db_exist(db_name):
             db_name = str(int(db_name) + 1)
         return db_name
