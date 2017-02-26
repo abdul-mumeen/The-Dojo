@@ -1,4 +1,5 @@
 from unittest import TestCase
+
 from rooms.dojo import Dojo
 from persons.fellows import Fellow
 from persons.persons import Person

@@ -1,15 +1,17 @@
+import random
+import string
+import os
+
 from persons.staffs import Staff
 from persons.fellows import Fellow
 from rooms.office import Office
 from rooms.livingspace import LivingSpace
 from data.database import DB
-import random
-import string
-import os
 
 
 class Dojo(object):
     """This is the app main class that has most functions"""
+    
     def __init__(self):
         self.all_rooms = {}
         self.staff_list = []

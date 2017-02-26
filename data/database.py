@@ -19,15 +19,7 @@ class DB(object):
             sqlite_file = "data/{}.sqlite".format(db_name)
             conn = sqlite3.connect(sqlite_file)
             c = conn.cursor()
-            c.execute("CREATE TABLE room_table (name TEXT PRIMARY KEY, \
-                                            type TEXT, capacity INTEGER)")
-
-            c.execute("CREATE TABLE person_table (id TEXT PRIMARY KEY,\
-                                name TEXT, designation TEXT, office TEXT)")
-
-            c.execute("CREATE TABLE livingspace_table (id TEXT PRIMARY KEY,\
-                                wants_accommodation TEXT, livingspace TEXT)")
-
+            self.run_migrations(c)
             self.insert_rooms(room_list, c)
             self.insert_people(person_list, c)
             conn.commit()
@@ -75,3 +67,13 @@ class DB(object):
         while self.db_exist(db_name):
             db_name = str(int(db_name) + 1)
         return db_name
+
+    def run_migrations(self, c):
+        c.execute("CREATE TABLE room_table (name TEXT PRIMARY KEY, \
+                                        type TEXT, capacity INTEGER)")
+
+        c.execute("CREATE TABLE person_table (id TEXT PRIMARY KEY,\
+                            name TEXT, designation TEXT, office TEXT)")
+
+        c.execute("CREATE TABLE livingspace_table (id TEXT PRIMARY KEY,\
+                            wants_accommodation TEXT, livingspace TEXT)")

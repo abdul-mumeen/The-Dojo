@@ -14,10 +14,7 @@ class Person(object):
 
     def get_existing_id(self, person_list):
         """This function extracts a list of existing id from person list"""
-        id_list = []
-        for i in range(0, len(person_list)):
-            id_list.append(person_list[i].ID)
-        return id_list
+        return [person.ID for person in person_list]
 
     def generate_id(self, person_list):
         """This function generates id for either staff or fellow."""

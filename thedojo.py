@@ -1,7 +1,8 @@
 #!/usr/bin/env python
-
 import cmd
+
 from docopt import docopt, DocoptExit
+
 from rooms.dojo import Dojo
 
 
