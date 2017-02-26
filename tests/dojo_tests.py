@@ -1,13 +1,14 @@
+import sys
+import os
 from unittest import TestCase
+
 from rooms.dojo import Dojo
 from persons.staffs import Staff
 from persons.fellows import Fellow
 from persons.persons import Person
-import sys
-import os
 
 
-class TestCreatRoom(TestCase):
+class TestCreateRoom(TestCase):
     def setUp(self):
         self.ndojo = Dojo()
 
