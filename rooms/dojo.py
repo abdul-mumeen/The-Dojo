@@ -11,7 +11,7 @@ from data.database import DB
 
 class Dojo(object):
     """This is the app main class that has most functions"""
-    
+
     def __init__(self):
         self.all_rooms = {}
         self.staff_list = []
@@ -57,19 +57,22 @@ class Dojo(object):
             new_room = Office(room_name)
             print("An office called {} ".format(room_name) +
                   "has been successfully created")
-        else:
+            self.all_rooms[new_room.name] = new_room
+        elif room_type == "livingspace":
             new_room = LivingSpace(room_name)
             room_name = room_name.title()
             print("A livingspace called {} ".format(room_name) +
                   "has been successfully created")
-        self.all_rooms[new_room.name] = new_room
+            self.all_rooms[new_room.name] = new_room
+        else:
+            print("Invalid room type")
 
     def add_person(self, name, designation, wants_accommodation="N"):
         """
         This function add a person by calling the add_fellow
         or add_staff function as the case may be.
         """
-        if name.strip() != "":
+        if name.strip():
             if designation.lower().strip() == "fellow":
                 fellow = self.add_fellow(name, wants_accommodation)
                 return fellow
@@ -86,7 +89,7 @@ class Dojo(object):
 
     def add_fellow(self, name, accommodation):
         """
-        This function create a fellow and add it to the list of staff
+        This function create a fellow and add it to the list of fellow
         while calling the allocate function to allocate room.
         """
         new_fellow = Fellow(name, "fellow")
@@ -139,7 +142,7 @@ class Dojo(object):
         from a list of rooms that are available_room
         """
         available_rooms = self.get_available_rooms(room_type)
-        if len(available_rooms) > 0:
+        if available_rooms:
             room = random.choice(available_rooms)
             if room.name not in self.allocated:
                 self.allocated[room.name] = []
@@ -150,7 +153,6 @@ class Dojo(object):
                 self.unallocated["office"].append(person)
             else:
                 self.unallocated["livingspace"].append(person)
-            return None
 
     def print_room(self, room_name):
         """"
@@ -210,13 +212,19 @@ class Dojo(object):
             file.write(print_out.upper())
             file.close()
             print("List have been successfully written to file")
+        else:
+            print("List not written to file, no file name supplied")
 
     def reset(self):
         """ This function reset Dojo to it initializatio stage"""
         self.__init__()
 
     def check_valid_id(self, input_val):
-        """ this function checks validity of the id supplied"""
+        """ This function checks validity of the id supplied.
+        It checks if it contains only '-', numbers and alphabets
+        It confirms that the first letter is either F for fellows
+        or S for staffs
+        """
         valid_string = string.ascii_uppercase + string.digits + "-"
         output = False if input_val.strip() == "" or \
             not set(input_val.upper()).issubset(set(valid_string)) or \
@@ -363,12 +371,42 @@ class Dojo(object):
             print("File not found")
 
     def save_state(self, db_name):
-        if db_name is None:
-            db_name = ""
+        db_name = "" if db_name is None else db_name
         new_db = DB()
-        room_list = []
-        for room in self.all_rooms:
-            room_list.append(self.all_rooms[room])
+        room_list = [self.all_rooms[room] for room in self.all_rooms]
         person_list = self.staff_list + self.fellow_list
         log = new_db.save_state(db_name, room_list, person_list)
         print(log)
+
+    def load_state(self, db_name):
+        self.reset()
+        new_db = DB()
+        app_data = new_db.load_state(db_name)
+        self.all_rooms = app_data["all_rooms"]
+        self.staff_list = app_data["staff_list"]
+        self.fellow_list = app_data["fellow_list"]
+        allocations = self.get_allocations()
+        self.allocated = allocations["allocated"]
+        self.unallocated = allocations["unallocated"]
+        print("successfully loaded")
+
+    def get_allocations(self):
+        allocated = {}
+        unallocated = {"office": [], "livingspace": []}
+        for person in self.staff_list + self.fellow_list:
+            if person.office is not None:
+                if person.office not in allocated:
+                    allocated[person.office] = []
+                allocated[person.office].append(person)
+            else:
+                unallocated["office"].append(person)
+            try:
+                if person.livingspace is not None:
+                    if person.livingspace not in allocated:
+                        allocated[person.livingspace] = []
+                    allocated[person.livingspace].append(person)
+                else:
+                    unallocated["livingspace"].append(person)
+            except:
+                pass
+        return {"allocated": allocated, "unallocated": unallocated}

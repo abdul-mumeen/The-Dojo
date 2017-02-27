@@ -77,3 +77,6 @@ class DB(object):
 
         c.execute("CREATE TABLE livingspace_table (id TEXT PRIMARY KEY,\
                             wants_accommodation TEXT, livingspace TEXT)")
+
+    def load_data(self, db_name):
+        pass
