@@ -438,8 +438,8 @@ class TestDatabase(TestCase):
         output = output.split("\n")
         self.assertEqual(
             output[len(output) - 1],
-            "The database pressure.sqlite has been successfully loaded")
+            "Data in pressure.sqlite have been successfully loaded")
         self.assertEqual(len(self.dojo.staff_list), 3)
         self.assertEqual(len(self.dojo.fellow_list), 4)
         self.assertEqual(len(self.dojo.all_rooms), 4)
-        self.assertTrue("Green" in self.all_rooms)
+        self.assertTrue("Green" in self.dojo.all_rooms)
