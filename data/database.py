@@ -48,7 +48,7 @@ class DB(object):
             if person.designation.lower() == "fellow":
                 livingSpace = person.livingspace.name if \
                                 person.livingspace is not None else ""
-                c.execute("INSERT INTO livingspace_table (id, \
+                c.execute("INSERT INTO livingspace_table (ids, \
                         wants_accommodation, livingspace) VALUES \
                             ('{}', '{}', '{}')".format(
                             person.ID,
@@ -75,8 +75,53 @@ class DB(object):
         c.execute("CREATE TABLE person_table (id TEXT PRIMARY KEY,\
                             name TEXT, designation TEXT, office TEXT)")
 
-        c.execute("CREATE TABLE livingspace_table (id TEXT PRIMARY KEY,\
+        c.execute("CREATE TABLE livingspace_table (ids TEXT PRIMARY KEY,\
                             wants_accommodation TEXT, livingspace TEXT)")
 
-    def load_data(self, db_name):
-        pass
+    def load_state(self, db_name):
+        sqlite_file = "data/{}.sqlite".format(db_name)
+        conn = sqlite3.connect(sqlite_file)
+        c = conn.cursor()
+        c.execute("select name, type from room_table")
+        db_room_list = c.fetchall()
+
+        room_list = {}
+        for row in db_room_list:
+            new_room = Office(row[0]) if row[1].lower() == \
+                    "office" else LivingSpace(row[0])
+            room_list[new_room.name] = new_room
+
+        fellow_list = []
+        c.execute("select id, name, designation, office," +
+                  " wants_accommodation, livingspace from " +
+                  "person_table INNER JOIN " +
+                  "livingspace_table ON id = " +
+                  "ids WHERE designation = 'fellow'")
+        db_fellow_list = c.fetchall()
+        for row in db_fellow_list:
+            new_fellow = Fellow(row[1], row[2])
+            new_fellow.ID = row[0]
+            new_fellow.office = room_list[row[3]] if row[3] \
+                and row[3] in room_list else None
+            new_fellow.wants_accommodation = row[4]
+            new_fellow.livingspace = room_list[row[5]] \
+                if row[5] and row[5] in room_list else None
+            fellow_list.append(new_fellow)
+            
+        staff_list = []
+        c.execute(
+            "select id, name, designation, office" +
+            " from person_table WHERE designation = 'staff'")
+        db_staff_list = c.fetchall()
+        for row in db_staff_list:
+            new_staff = Staff(row[1], row[2])
+            new_staff.ID = row[0]
+            new_staff.office = room_list[row[3]] if row[3] \
+                and row[3] in room_list else None
+            staff_list.append(new_staff)
+
+        app_data = {"all_rooms": room_list, "staff_list": staff_list,
+                    "fellow_list": fellow_list}
+        conn.commit()
+        conn.close()
+        return app_data

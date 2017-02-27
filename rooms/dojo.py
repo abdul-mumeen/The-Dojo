@@ -379,16 +379,20 @@ class Dojo(object):
         print(log)
 
     def load_state(self, db_name):
-        self.reset()
-        new_db = DB()
-        app_data = new_db.load_state(db_name)
-        self.all_rooms = app_data["all_rooms"]
-        self.staff_list = app_data["staff_list"]
-        self.fellow_list = app_data["fellow_list"]
-        allocations = self.get_allocations()
-        self.allocated = allocations["allocated"]
-        self.unallocated = allocations["unallocated"]
-        print("successfully loaded")
+        if os.path.isfile("data/{}.sqlite".format(db_name)):
+            self.reset()
+            new_db = DB()
+            app_data = new_db.load_state(db_name)
+            self.all_rooms = app_data["all_rooms"]
+            self.staff_list = app_data["staff_list"]
+            self.fellow_list = app_data["fellow_list"]
+            allocations = self.get_allocations()
+            self.allocated = allocations["allocated"]
+            self.unallocated = allocations["unallocated"]
+            print("Data in {}.sqlite have been successfully loaded"
+                  .format(db_name))
+        else:
+            print("File not found")
 
     def get_allocations(self):
         allocated = {}

@@ -1,6 +1,8 @@
-class Room(object):
+from abc import ABCMeta
+
+
+class Room(metaclass=ABCMeta):
     """ This is the base class for office and livingspace class """
 
-    def __init__(self, name, total_space=4):
+    def __init__(self, name):
         self.name = name
-        self.total_space = total_space
