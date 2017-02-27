@@ -93,6 +93,14 @@ class TestCreateRoom(TestCase):
         self.assertEqual(
             log[len(log) - 1], "The livingspace at index 2 already existed.")
 
+
+class TestPrintFunctions(TestCase):
+    def setUp(self):
+        self.ndojo = Dojo()
+
+    def tearDown(self):
+        self.ndojo.reset()
+
     def test_print_rooms(self):
         """ This function test the printing of names of occupant of a room """
         self.ndojo.create_room(["Brown"], "office")
@@ -114,7 +122,7 @@ class TestCreateRoom(TestCase):
         output_2 = sys.stdout.getvalue().strip()
         output = output_2.replace(output_1, "")
         self.assertEqual(
-            output, "BLUE\n" +
+            output, "List not written to file, no file name supplied\nBLUE\n" +
             "----------------------------\nHASSAN EL-SAHEED, MIKE TYSON")
 
     def test_print_allocation_to_file(self):
@@ -167,19 +175,19 @@ class TestAddPersons(TestCase):
         self.assertIsInstance(new_fellow, Person)
         self.assertEqual(new_fellow.livingspace, None)
 
-    def test_add_person_invalid_input_1(self):
+    def test_add_person_livingspace_for_staff(self):
         """ This function checks for invalid inputs """
         self.dojo.add_person("Andy Carroll", "staff", "Y")
         output = sys.stdout.getvalue().strip()
         self.assertEqual(output, "Staff cannot request for a livingspace!")
 
-    def test_add_person_invalid_input_2(self):
+    def test_add_person_empty_name_supplied(self):
         self.dojo.add_person("  ", "staff")
         output = sys.stdout.getvalue().strip()
         self.assertEqual(output,
                          "Person cannot be created with an empty name!")
 
-    def test_add_person_invalid_input_3(self):
+    def test_add_person_invalid_designation(self):
         self.dojo.add_person("Samora Dake", "type", "Y")
         output = sys.stdout.getvalue().strip()
         self.assertEqual(
