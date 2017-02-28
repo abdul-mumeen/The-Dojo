@@ -20,7 +20,7 @@ $ pip install python-virtualenv
 
 #### On a windows system
 
-Download [Python 3 `exe` file]https://www.python.org/downloads/release/python-360/ and run the file.
+Download [Python 3 `exe` file](https://www.python.org/downloads/release/python-360/) and run the file.
 Open the commandline (cmd) and run the command;
 `pip install virtualenv`
 
@@ -30,8 +30,10 @@ On the commandline/terminal, run the command;
 ```
 git clone https://github.com/andela-aolasode/The-Dojo.git
 cd The-Dojo
+
 virtualenv --python python3 venv-dojo
 source venv-dojo/bin/activate
+
 pip install -r requirements.txt
 ```
 

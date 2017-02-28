@@ -346,7 +346,7 @@ class Dojo(object):
                 line = 1
                 error = False
                 for person_detail in content:
-                    if person_detail.strip() != "":
+                    if person_detail.strip():
                         person_detail = person_detail.strip().split()
                         name = person_detail[0] + " " + person_detail[1]
                         if len(person_detail) == 3:
@@ -355,13 +355,17 @@ class Dojo(object):
                                 print("line {} was not loaded because of " +
                                       "the above^^ reason".format(line))
                                 error = True
-                        else:
+                        elif len(person_detail) == 4:
                             person = self.add_person(name, person_detail[2],
                                                      person_detail[3])
                             if person is None:
                                 print("line {} was not loaded because of " +
                                       "the above^^ reason".format(line))
                                 error = True
+                        else:
+                            print("line {} was not loaded because of " +
+                                  "the above^^ reason".format(line))
+                            error = True
                     line += 1
                 load_ran = "Everyone" if not error else "Some people"
                 print(load_ran, "on the list have been successfully loaded")
