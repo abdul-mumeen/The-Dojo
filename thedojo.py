@@ -1,15 +1,17 @@
 #!/usr/bin/env python
 import cmd
+import os
+import sys
 
 from docopt import docopt, DocoptExit
+from termcolor import cprint
+from pyfiglet import figlet_format
 
 from rooms.dojo import Dojo
 
 
 def docopt_cmd(func):
-    """
-    This decorator
-    """
+    """ This is the decorator for the functions running the commands """
 
     def fn(self, arg):
         try:
@@ -18,15 +20,12 @@ def docopt_cmd(func):
         except DocoptExit as e:
             # The DocoptExit is thrown when the args do not match.
             # It prints a message to the user and the usage block.
-            print('Invalid Command!')
-            print(e)
+            cprint("Invalid Command: the value(s) are not entered " +
+                  "correctly!\nKindly check the usage bellow", "yellow")
+            cprint(e, "cyan")
             return
-
-        # except SystemExit:
-        #     # The SystemExit exception prints the usage for --help
-        #     # We do not need to do the print here.
-        #     print("low waist")
-        #     return
+        except:
+            cprint("The operation failed due to unexpected error!", "yellow")
 
         return func(self, opt)
 
@@ -37,15 +36,21 @@ def docopt_cmd(func):
 
 
 class TheDojo (cmd.Cmd):
-    intro = 'Welcome to The Dojo Office Allocation Program!' \
-        + ' (type help for a list of commands.)'
-    prompt = 'The_Dojo >>> '
-    file = None
+    os.system("clear")
+    cprint(figlet_format("The Dojo", font="starwars"),
+           "yellow", attrs=["bold"])
+    intro = "\t\tWelcome to The Dojo Office Allocation Program!\n" \
+        + "\t\t\t(type help for a list of commands.)\n"
+    prompt = "The_Dojo >>> "
+    doc_header = "List of commands in this app"
     dojo = Dojo()
+
+    def default(self, line):
+        cprint("There is no command such as '%s'" % line, "yellow")
 
     @docopt_cmd
     def do_print_room(self, arg):
-        """Usage: print_room <room_name>  """
+        """Usage: print_room <room_name>"""
         room = arg['<room_name>']
         self.dojo.print_room(room)
 
@@ -110,10 +115,15 @@ class TheDojo (cmd.Cmd):
         self.dojo.save_state(db_name)
 
     @docopt_cmd
+    def do_load_state(self, arg):
+        """Usage: load_state <sqlite_database>"""
+        cprint("Loading a state will overwrite the current state!\n" +
+               "Do you want to continue", "cyan")
+        overwrite = input("(y/n): ")
+
+    @docopt_cmd
     def do_quit(self, arg):
         """Usage: quit"""
         print('=========== Good Bye =============!\n')
         exit()
-
-
 TheDojo().cmdloop()
