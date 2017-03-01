@@ -42,7 +42,7 @@ class TheDojo (cmd.Cmd):
     intro = "\t\tWelcome to The Dojo Office Allocation Program!\n" \
         + "\t\t\t(type help for a list of commands.)\n"
     prompt = "The_Dojo >>> "
-    doc_header = "List of commands in this app"
+    doc_header = "List of commands that can be used in this app"
     dojo = Dojo()
 
     def default(self, line):
@@ -120,10 +120,12 @@ class TheDojo (cmd.Cmd):
         cprint("Loading a state will overwrite the current state!\n" +
                "Do you want to continue", "cyan")
         overwrite = input("(y/n): ")
+        if overwrite.lower() == "y":
+            self.dojo.load_state(arg['<sqlite_database>'])
 
     @docopt_cmd
     def do_quit(self, arg):
         """Usage: quit"""
-        print('=========== Good Bye =============!\n')
+        cprint("=========== Good Bye =============!\n", "green")
         exit()
 TheDojo().cmdloop()

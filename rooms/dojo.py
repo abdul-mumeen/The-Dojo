@@ -267,36 +267,55 @@ class Dojo(object):
 
     def move_person(self, person_id, index, new_room_name):
         """ This function move a person to the new room"""
+
         if isinstance(self.all_rooms[new_room_name], LivingSpace) and \
            person_id.upper()[0] == "S":
             print("Staff cannot be moved to a livingspace")
         elif isinstance(self.all_rooms[new_room_name], LivingSpace):
             if self.fellow_list[index].wants_accommodation:
                 if self.fellow_list[index].livingspace is not None:
-                    self.remove_from_allocated(person_id)
+                    if self.fellow_list[index].livingspace.name.lower() != \
+                            new_room_name.lower():
+                        self.remove_from_allocated(person_id)
+                    else:
+                        print("Fellow is currently assigned to this" +
+                              " livingspace")
+                        return
                 self.fellow_list[index].livingspace = \
                     self.all_rooms[new_room_name]
                 self.add_room_to_allocated(new_room_name)
                 self.allocated[new_room_name].append(self.fellow_list[index])
                 print("Fellow has been successfully " +
-                      "moved to the new livingspace")
+                      "reallocated to livingspace", new_room_name)
             else:
                 print("Fellow does not want a livingspace")
         else:
             if person_id.upper()[0] == "S":
                 if self.staff_list[index].office is not None:
-                    self.remove_from_allocated(person_id)
+                    if self.staff_list[index].office.name.lower() != \
+                            new_room_name.lower():
+                        self.remove_from_allocated(person_id)
+                    else:
+                        print("Staff is currently assigned to this office")
+                        return
                 self.staff_list[index].office = self.all_rooms[new_room_name]
                 self.add_room_to_allocated(new_room_name)
                 self.allocated[new_room_name].append(self.staff_list[index])
-                print("Staff has been successfully moved to the new office")
+                print("Staff has been successfully reallocated to office",
+                      new_room_name)
             else:
-                if self.fellow_list[index].livingspace is not None:
-                    self.remove_from_allocated(person_id)
+                if self.fellow_list[index].office is not None:
+                    if self.fellow_list[index].office.name.lower() != \
+                            new_room_name.lower():
+                        self.remove_from_allocated(person_id)
+                    else:
+                        print("Fellow is currently assigned to this office")
+                        return
                 self.fellow_list[index].office = self.all_rooms[new_room_name]
                 self.add_room_to_allocated(new_room_name)
                 self.allocated[new_room_name].append(self.fellow_list[index])
-                print("Fellow has been successfully moved to the new office")
+                print("Fellow has been successfully reallocated to office",
+                      new_room_name)
 
     def add_room_to_allocated(self, room_name):
         """ this function add a new room to the room allocated list """
@@ -312,6 +331,7 @@ class Dojo(object):
                     return True
 
     def print_person_list(self, staff_or_fellow):
+        """ This function print a list of staff or fellow and their details """
         list_header = ""
         if staff_or_fellow == "staff":
             person_list = self.staff_list
@@ -352,19 +372,19 @@ class Dojo(object):
                         if len(person_detail) == 3:
                             person = self.add_person(name, person_detail[2])
                             if person is None:
-                                print("line {} was not loaded because of " +
-                                      "the above^^ reason".format(line))
+                                print("line {} was not loaded ".format(line) +
+                                      "because of the above^^ reason")
                                 error = True
                         elif len(person_detail) == 4:
                             person = self.add_person(name, person_detail[2],
                                                      person_detail[3])
                             if person is None:
-                                print("line {} was not loaded because of " +
-                                      "the above^^ reason".format(line))
+                                print("line {} was not loaded ".format(line) +
+                                      "because of the above^^ reason")
                                 error = True
                         else:
-                            print("line {} was not loaded because of " +
-                                  "the above^^ reason".format(line))
+                            print("line {} was not loaded ".format(line) +
+                                  "because of invalid parameters supplied")
                             error = True
                     line += 1
                 load_ran = "Everyone" if not error else "Some people"
@@ -375,6 +395,10 @@ class Dojo(object):
             print("File not found")
 
     def save_state(self, db_name):
+        """
+        This function save state by storing data from the
+        application's data structure into a database
+        """
         db_name = "" if db_name is None else db_name
         new_db = DB()
         room_list = [self.all_rooms[room] for room in self.all_rooms]
@@ -383,6 +407,10 @@ class Dojo(object):
         print(log)
 
     def load_state(self, db_name):
+        """
+        This function retrieves data from the database and assign them
+        to the appropraite variables to store them
+        """
         if os.path.isfile("data/{}.sqlite".format(db_name)):
             self.reset()
             new_db = DB()
@@ -399,6 +427,10 @@ class Dojo(object):
             print("File not found")
 
     def get_allocations(self):
+        """
+        This function extracts the allocated and unallocated
+        collection from the data retrieved from the database
+        """
         allocated = {}
         unallocated = {"office": [], "livingspace": []}
         for person in self.staff_list + self.fellow_list:
