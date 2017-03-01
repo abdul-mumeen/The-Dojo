@@ -121,7 +121,6 @@ class DB(object):
             " from person_table WHERE designation = 'staff'")
         db_staff_list = c.fetchall()
         staff_list = self.get_staffs_from_db_staffs(db_staff_list, rooms)
-
         app_data = {"all_rooms": rooms, "staff_list": staff_list,
                     "fellow_list": fellow_list}
         conn.commit()
@@ -149,11 +148,15 @@ class DB(object):
         for row in db_fellow_list:
             new_fellow = Fellow(row[1], row[2])
             new_fellow.ID = row[0]
-            new_fellow.office = rooms[row[3]] if row[3] \
-                and row[3] in rooms else None
+            new_fellow.office = [room for room in rooms
+                if room.name.title() == row[3].title()][0] if row[3] and \
+                row[3].title() in [room.name.title() for room in rooms] \
+                else None
             new_fellow.wants_accommodation = row[4]
-            new_fellow.livingspace = rooms[row[5]] \
-                if row[5] and row[5] in rooms else None
+            new_fellow.livingspace = [room for room in rooms
+                if room.name.title() == row[5].title()][0] if row[5] and \
+                row[5].title() in [room.name.title() for room in rooms] \
+                else None
             fellow_list.append(new_fellow)
         return fellow_list
 
@@ -166,7 +169,9 @@ class DB(object):
         for row in db_staff_list:
             new_staff = Staff(row[1], row[2])
             new_staff.ID = row[0]
-            new_staff.office = rooms[row[3]] if row[3] \
-                and row[3] in rooms else None
+            new_staff.office = [room for room in rooms
+                if room.name.title() == row[3].title()][0] if row[3] and \
+                row[3].title() in [room.name.title() for room in rooms] \
+                else None
             staff_list.append(new_staff)
         return staff_list
