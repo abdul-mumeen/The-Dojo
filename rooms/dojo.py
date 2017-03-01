@@ -2,6 +2,7 @@ import random
 import string
 import os
 
+from termcolor import cprint
 from persons.staffs import Staff
 from persons.fellows import Fellow
 from rooms.office import Office
@@ -48,7 +49,7 @@ class Dojo(object):
         if log == "":
             return True
         else:
-            print(log)
+            cprint(log, "yellow")
 
     def add_room(self, room_name, room_type):
         """ This function add the new room to the list of all rooms"""
@@ -159,16 +160,16 @@ class Dojo(object):
         members of the passed room
         """
         print_out = ""
-        if room_name.title() in [room.name for room in self.all_rooms]:
-            if room_name in self.allocated:
-                for person in self.allocated[room_name]:
+        if room_name.title() in [room.name.title() for room in self.all_rooms]:
+            if room_name.title() in self.allocated:
+                for person in self.allocated[room_name.title()]:
                     print_out += person.name.upper() + "\n"
             else:
                 print_out = "No allocation for this room"
             print_out = room_name.upper() + "\n" + ("-" * 15) + "\n" + \
                 print_out
         else:
-            print_out = "No such room as " + room_name
+            print_out = "No such room as " + room_name.title()
         print(print_out)
 
     def print_allocation(self, file_name=None):
@@ -250,8 +251,8 @@ class Dojo(object):
             id_index = self.get_person_list_index(person_id)
             if id_index > -1:
                 if new_room_name in [room.name for room in self.all_rooms]:
-                    room = [room for room in self.all_rooms if room.name == \
-                        new_room_name][0]
+                    room = [room for room in self.all_rooms if room.name ==
+                            new_room_name][0]
                     if new_room_name not in self.allocated:
                         self.move_person(person_id, id_index, new_room_name)
                     elif room.total_space > len(self.allocated[new_room_name]):
@@ -268,8 +269,8 @@ class Dojo(object):
     def move_person(self, person_id, index, new_room_name):
         """ This function move a person to the new room"""
 
-        room = [room for room in self.all_rooms if room.name == \
-            new_room_name][0]
+        room = [room for room in self.all_rooms if room.name ==
+                new_room_name][0]
         if isinstance(room, LivingSpace) and person_id.upper()[0] == "S":
             print("Staff cannot be moved to a livingspace")
         elif isinstance(room, LivingSpace):
@@ -361,7 +362,7 @@ class Dojo(object):
             file = open("data/{}.txt".format(file_name), "r")
             content = file.read()
             file.close()
-            if content.strip() != "":
+            if content.strip():
                 content = content.split("\n")
                 line = 1
                 error = False
@@ -434,16 +435,16 @@ class Dojo(object):
         unallocated = {"office": [], "livingspace": []}
         for person in self.staff_list + self.fellow_list:
             if person.office is not None:
-                if person.office not in allocated:
-                    allocated[person.office] = []
-                allocated[person.office].append(person)
+                if person.office.name.title() not in allocated:
+                    allocated[person.office.name.title()] = []
+                allocated[person.office.name.title()].append(person)
             else:
                 unallocated["office"].append(person)
             try:
                 if person.livingspace is not None:
-                    if person.livingspace not in allocated:
-                        allocated[person.livingspace] = []
-                    allocated[person.livingspace].append(person)
+                    if person.livingspace.name.title() not in allocated:
+                        allocated[person.livingspace.name.title()] = []
+                    allocated[person.livingspace.name.title()].append(person)
                 else:
                     unallocated["livingspace"].append(person)
             except:
