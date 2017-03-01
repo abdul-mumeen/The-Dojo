@@ -76,8 +76,8 @@ class TheDojo (cmd.Cmd):
 
     @docopt_cmd
     def do_add_person(self, arg):
-        """Usage: add_person <first_name> <last_name> (fellow | staff) \
-        [<wants_accommodation>]"""
+        """Usage: add_person <first_name> <last_name> (fellow | staff)""" \
+        """ [<wants_accommodation>]"""
         fname = arg['<first_name>']
         lname = arg['<last_name>']
         fellow = arg['fellow']
