@@ -202,22 +202,31 @@ class TestReallocate(TestCase):
         self.dojo.reset()
 
     def test_empty_valid_id(self):
-        """ this function test for empty invalid id"""
+        """ This function test for empty invalid id """
         self.dojo.reallocate_person(" ", "Blue")
         output = sys.stdout.getvalue().strip()
         self.assertEqual(output, "Invalid id supplied")
 
     def test_wrong_format_invalid_id(self):
-        """ this function test for wrong format invalid id"""
+        """ This function test for wrong format invalid id """
         self.dojo.reallocate_person("asdff", "Blue")
         output = sys.stdout.getvalue().strip()
         self.assertEqual(output, "Invalid id supplied")
 
     def test_wrong_invalid_id(self):
-        """ this function test for wrong invalid id"""
+        """ This function test for wrong invalid id"""
         self.dojo.reallocate_person("A-FG4HU", "Blue")
         output = sys.stdout.getvalue().strip()
         self.assertEqual(output, "Invalid id supplied")
+
+    def test_rellocate_to_same_room(self):
+        self.dojo.create_room(["Blue"], "office")
+        new_fellow = self.dojo.add_person("Jeremy Johnson", "fellow")
+        self.dojo.reallocate_person(new_fellow.ID, "Blue")
+        output = sys.stdout.getvalue().strip()
+        output = output.split("\n")
+        self.assertEqual(output[len(output) - 1],
+                         "Fellow is currently assigned to this office")
 
     def test_fellow_not_existing_id(self):
         """ This function test for fellow existing id"""
@@ -261,7 +270,7 @@ class TestReallocate(TestCase):
         output = output.split("\n")
         self.assertEqual(
             output[len(output) - 1],
-            "Fellow has been successfully moved to the new office")
+            "Fellow has been successfully reallocated to office Brown")
 
     def test_staff_office_reallocate(self):
         """ This function test if staff office reallocation is successful"""
@@ -273,7 +282,7 @@ class TestReallocate(TestCase):
         output = output.split("\n")
         self.assertEqual(
             output[len(output) - 1],
-            "Staff has been successfully moved to the new office")
+            "Staff has been successfully reallocated to office Brown")
 
     def test_fellow_livingspace_reallocate(self):
         """ This function test if fellow room reallocation is successful"""
@@ -283,9 +292,8 @@ class TestReallocate(TestCase):
         self.dojo.reallocate_person(new_fellow.ID, "Brown")
         output = sys.stdout.getvalue().strip()
         output = output.split("\n")
-        self.assertEqual(
-                output[len(output) - 1],
-                "Fellow has been successfully moved to the new livingspace")
+        self.assertEqual(output[len(output) - 1], "Fellow has been" +
+                         " successfully reallocated to livingspace Brown")
 
     def test_fellow_livingspace(self):
         """ This function test if room rellocating to is of the same type"""
@@ -347,6 +355,24 @@ class TestLoadPeople(TestCase):
         output = output.split("\n")
         self.assertEqual(
             output[len(output) - 3], "Staff cannot request for a livingspace!")
+        self.assertEqual(
+            output[len(output) - 1],
+            "Some people on the list have been successfully loaded")
+
+    def test_excess_parameters(self):
+        """ This function test if the file supplied contains invalid input """
+        file_content = "OLUWAFEMI SULE FELLOW Y\n\
+                        DOMINIC WALTERS STAFF Y FREAK\n\
+                        SIMON PATTERSON FELLOW Y\n"
+        file = open("data/people.txt", "w")
+        file.write(file_content.upper())
+        file.close()
+        self.dojo.load_people("people")
+        output = sys.stdout.getvalue().strip()
+        output = output.split("\n")
+        self.assertEqual(
+            output[len(output) - 2], "line 2 was not loaded because of " +
+            "invalid parameters supplied")
         self.assertEqual(
             output[len(output) - 1],
             "Some people on the list have been successfully loaded")
@@ -425,12 +451,17 @@ class TestDatabase(TestCase):
                                 "been successfully saved with 2017.sqlite")
 
     def test_load_state_file_not_exist(self):
+        """ This function test if the file supplied exist """
         self.dojo.load_state("pressure")
         output = sys.stdout.getvalue().strip()
         output = output.split("\n")
         self.assertEqual(output[len(output) - 1], "File not found")
 
-    def test_load_state_file_exist(self):
+    def test_load_state_successful(self):
+        """
+        This function test if the load state is successful
+        when file exist
+        """
         self.dojo.save_state("pressure")
         self.dojo.reset()
         self.dojo.load_state("pressure")
