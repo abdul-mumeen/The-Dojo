@@ -13,7 +13,7 @@ class Dojo(object):
     """This is the app main class that has most functions"""
 
     def __init__(self):
-        self.all_rooms = {}
+        self.all_rooms = []
         self.staff_list = []
         self.fellow_list = []
         self.allocated = {}
@@ -57,13 +57,13 @@ class Dojo(object):
             new_room = Office(room_name)
             print("An office called {} ".format(room_name) +
                   "has been successfully created")
-            self.all_rooms[new_room.name] = new_room
+            self.all_rooms.append(new_room)
         elif room_type == "livingspace":
             new_room = LivingSpace(room_name)
             room_name = room_name.title()
             print("A livingspace called {} ".format(room_name) +
                   "has been successfully created")
-            self.all_rooms[new_room.name] = new_room
+            self.all_rooms.append(new_room)
         else:
             print("Invalid room type")
 
@@ -118,7 +118,7 @@ class Dojo(object):
         This function checks if a room name passed already existed
         in the list of all rooms.
         """
-        return room_name in self.all_rooms
+        return room_name in [room.name for room in self.all_rooms]
 
     def get_available_rooms(self, room_type):
         """
@@ -127,13 +127,12 @@ class Dojo(object):
         """
         available_room = []
         for room in self.all_rooms:
-            room_available = self.all_rooms[room].total_space > \
-                                    len(self.allocated[room]) \
-                                    if room in self.allocated else True
+            room_available = room.total_space > \
+                                    len(self.allocated[room.name]) \
+                                    if room.name in self.allocated else True
 
-            if room_available and isinstance(
-                                        self.all_rooms[room], room_type):
-                available_room.append(self.all_rooms[room])
+            if room_available and isinstance(room, room_type):
+                available_room.append(room)
         return available_room
 
     def allocate_room(self, person, room_type):
@@ -160,12 +159,12 @@ class Dojo(object):
         members of the passed room
         """
         print_out = ""
-        if room_name.title() in self.all_rooms:
+        if room_name.title() in [room.name for room in self.all_rooms]:
             if room_name in self.allocated:
                 for person in self.allocated[room_name]:
                     print_out += person.name.upper() + "\n"
             else:
-                print_out = "No allocation to this room"
+                print_out = "No allocation for this room"
             print_out = room_name.upper() + "\n" + ("-" * 15) + "\n" + \
                 print_out
         else:
@@ -250,11 +249,12 @@ class Dojo(object):
         if self.check_valid_id(person_id):
             id_index = self.get_person_list_index(person_id)
             if id_index > -1:
-                if new_room_name in self.all_rooms:
+                if new_room_name in [room.name for room in self.all_rooms]:
+                    room = [room for room in self.all_rooms if room.name == \
+                        new_room_name][0]
                     if new_room_name not in self.allocated:
                         self.move_person(person_id, id_index, new_room_name)
-                    elif self.all_rooms[new_room_name].total_space > \
-                            len(self.allocated[new_room_name]):
+                    elif room.total_space > len(self.allocated[new_room_name]):
                         self.move_person(person_id, id_index, new_room_name)
                     else:
                         print("The room selected is full")
@@ -268,10 +268,11 @@ class Dojo(object):
     def move_person(self, person_id, index, new_room_name):
         """ This function move a person to the new room"""
 
-        if isinstance(self.all_rooms[new_room_name], LivingSpace) and \
-           person_id.upper()[0] == "S":
+        room = [room for room in self.all_rooms if room.name == \
+            new_room_name][0]
+        if isinstance(room, LivingSpace) and person_id.upper()[0] == "S":
             print("Staff cannot be moved to a livingspace")
-        elif isinstance(self.all_rooms[new_room_name], LivingSpace):
+        elif isinstance(room, LivingSpace):
             if self.fellow_list[index].wants_accommodation:
                 if self.fellow_list[index].livingspace is not None:
                     if self.fellow_list[index].livingspace.name.lower() != \
@@ -281,8 +282,7 @@ class Dojo(object):
                         print("Fellow is currently assigned to this" +
                               " livingspace")
                         return
-                self.fellow_list[index].livingspace = \
-                    self.all_rooms[new_room_name]
+                self.fellow_list[index].livingspace = room
                 self.add_room_to_allocated(new_room_name)
                 self.allocated[new_room_name].append(self.fellow_list[index])
                 print("Fellow has been successfully " +
@@ -298,7 +298,7 @@ class Dojo(object):
                     else:
                         print("Staff is currently assigned to this office")
                         return
-                self.staff_list[index].office = self.all_rooms[new_room_name]
+                self.staff_list[index].office = room
                 self.add_room_to_allocated(new_room_name)
                 self.allocated[new_room_name].append(self.staff_list[index])
                 print("Staff has been successfully reallocated to office",
@@ -311,7 +311,7 @@ class Dojo(object):
                     else:
                         print("Fellow is currently assigned to this office")
                         return
-                self.fellow_list[index].office = self.all_rooms[new_room_name]
+                self.fellow_list[index].office = room
                 self.add_room_to_allocated(new_room_name)
                 self.allocated[new_room_name].append(self.fellow_list[index])
                 print("Fellow has been successfully reallocated to office",
@@ -401,9 +401,8 @@ class Dojo(object):
         """
         db_name = "" if db_name is None else db_name
         new_db = DB()
-        room_list = [self.all_rooms[room] for room in self.all_rooms]
         person_list = self.staff_list + self.fellow_list
-        log = new_db.save_state(db_name, room_list, person_list)
+        log = new_db.save_state(db_name, self.all_rooms, person_list)
         print(log)
 
     def load_state(self, db_name):
