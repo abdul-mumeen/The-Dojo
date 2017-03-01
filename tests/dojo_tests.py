@@ -473,4 +473,4 @@ class TestDatabase(TestCase):
         self.assertEqual(len(self.dojo.staff_list), 3)
         self.assertEqual(len(self.dojo.fellow_list), 4)
         self.assertEqual(len(self.dojo.all_rooms), 4)
-        self.assertTrue("Green" in self.dojo.all_rooms)
+        self.assertTrue("Green" in [room.name for room in self.dojo.all_rooms])

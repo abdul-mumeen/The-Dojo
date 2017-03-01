@@ -133,11 +133,11 @@ class DB(object):
         This function extracts the collection of rooms from the
         rows of room returned from the database
         """
-        rooms = {}
+        rooms = []
         for row in db_rooms:
             new_room = Office(row[0]) if row[1].lower() == \
                     "office" else LivingSpace(row[0])
-            rooms[new_room.name] = new_room
+            rooms.append(new_room)
         return rooms
 
     def get_fellows_from_db_fellows(self, db_fellow_list, rooms):
