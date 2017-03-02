@@ -39,7 +39,7 @@ class Dojo(object):
                         log += "\nThe {} at index {} ".format(
                                 room_type, str(i)) + "already existed."
                     else:
-                        self.add_room(room, room_type)
+                        self.add_room(room.title(), room_type)
                     i += 1
             else:
                 log += "\nCannot create room(s), invalid room type enterred"
@@ -119,7 +119,8 @@ class Dojo(object):
         This function checks if a room name passed already existed
         in the list of all rooms.
         """
-        return room_name in [room.name for room in self.all_rooms]
+        return room_name.title() in [room.name.title() for
+                                     room in self.all_rooms]
 
     def get_available_rooms(self, room_type):
         """
@@ -129,8 +130,8 @@ class Dojo(object):
         available_room = []
         for room in self.all_rooms:
             room_available = room.total_space > \
-                                    len(self.allocated[room.name]) \
-                                    if room.name in self.allocated else True
+                            len(self.allocated[room.name.title()]) \
+                            if room.name.title() in self.allocated else True
 
             if room_available and isinstance(room, room_type):
                 available_room.append(room)
@@ -144,15 +145,15 @@ class Dojo(object):
         available_rooms = self.get_available_rooms(room_type)
         if available_rooms:
             room = random.choice(available_rooms)
-            if room.name not in self.allocated:
-                self.allocated[room.name] = []
-            self.allocated[room.name].append(person)
+            if room.name.title() not in self.allocated:
+                self.allocated[room.name.title()] = []
+            self.allocated[room.name.title()].append(person)
             return room
         else:
             if room_type == Office:
-                self.unallocated["office"].append(person)
+                self.unallocated["office"].append(person.ID.upper())
             else:
-                self.unallocated["livingspace"].append(person)
+                self.unallocated["livingspace"].append(person.ID.upper())
 
     def print_room(self, room_name):
         """"
@@ -160,8 +161,10 @@ class Dojo(object):
         members of the passed room
         """
         print_out = ""
-        if room_name.title() in [room.name.title() for room in self.all_rooms]:
-            if room_name.title() in self.allocated:
+        if room_name.title() in [room.name.title()
+                                 for room in self.all_rooms]:
+            if room_name.title() in {room.title()
+                                     for room in self.allocated}:
                 for person in self.allocated[room_name.title()]:
                     print_out += person.name.upper() + "\n"
             else:
@@ -184,8 +187,8 @@ class Dojo(object):
                 names += person.name + ", "
             names = names[:-2]
             print_out += room + "\n" + ("-" * len(names)) + \
-                "\n" + names + "\n"
-        if print_out == "":
+                "\n" + names + "\n\n"
+        if not print_out:
             print("Nobody on the allocated list.")
         else:
             self.write_to_file(print_out, file_name)
@@ -195,9 +198,12 @@ class Dojo(object):
         """ This function prints the list of unallocated persons"""
         print_out = ""
         for key in self.unallocated:
-            for person in self.unallocated[key]:
+            for id in self.unallocated[key]:
+                person = [person for person in
+                          (self.staff_list + self.fellow_list)
+                          if person.ID.upper() == id.upper()][0]
                 print_out += person.name.upper() + " - NO " + \
-                                            key.upper() + "\n"
+                    key.upper() + "\n"
         if print_out == "":
             print("Nobody on the unallocated list.")
         else:
@@ -250,12 +256,14 @@ class Dojo(object):
         if self.check_valid_id(person_id):
             id_index = self.get_person_list_index(person_id)
             if id_index > -1:
+                new_room_name = new_room_name.title()
                 if new_room_name in [room.name for room in self.all_rooms]:
                     room = [room for room in self.all_rooms if room.name ==
                             new_room_name][0]
                     if new_room_name not in self.allocated:
                         self.move_person(person_id, id_index, new_room_name)
-                    elif room.total_space > len(self.allocated[new_room_name]):
+                    elif room.total_space > \
+                            len(self.allocated[new_room_name]):
                         self.move_person(person_id, id_index, new_room_name)
                     else:
                         print("The room selected is full")
@@ -285,6 +293,10 @@ class Dojo(object):
                         return
                 self.fellow_list[index].livingspace = room
                 self.add_room_to_allocated(new_room_name)
+                if self.fellow_list[index].ID in \
+                        self.unallocated["livingspace"]:
+                    self.unallocated["livingspace"]\
+                        .remove(self.fellow_list[index].ID)
                 self.allocated[new_room_name].append(self.fellow_list[index])
                 print("Fellow has been successfully " +
                       "reallocated to livingspace", new_room_name)
@@ -301,6 +313,9 @@ class Dojo(object):
                         return
                 self.staff_list[index].office = room
                 self.add_room_to_allocated(new_room_name)
+                if self.staff_list[index].ID in self.unallocated["office"]:
+                    self.unallocated["office"]\
+                        .remove(self.staff_list[index].ID)
                 self.allocated[new_room_name].append(self.staff_list[index])
                 print("Staff has been successfully reallocated to office",
                       new_room_name)
@@ -314,14 +329,17 @@ class Dojo(object):
                         return
                 self.fellow_list[index].office = room
                 self.add_room_to_allocated(new_room_name)
+                if self.fellow_list[index].ID in self.unallocated["office"]:
+                    self.unallocated["office"]\
+                        .remove(self.fellow_list[index].ID)
                 self.allocated[new_room_name].append(self.fellow_list[index])
                 print("Fellow has been successfully reallocated to office",
                       new_room_name)
 
     def add_room_to_allocated(self, room_name):
         """ this function add a new room to the room allocated list """
-        if room_name not in self.allocated:
-            self.allocated[room_name] = []
+        if room_name.title() not in self.allocated:
+            self.allocated[room_name.title()] = []
 
     def remove_from_allocated(self, person_id):
         """ this function remove a person from previously allocated room"""
@@ -341,7 +359,7 @@ class Dojo(object):
             person_list = self.fellow_list
             list_header = "Fellow List\n"
 
-        list_header += "ID\tNAME\t\t\tOFFICE NAME\tLIVINGSPACE\n"
+        list_header += "ID\t\tNAME\t\tOFFICE NAME\tLIVINGSPACE\n"
         print_out = list_header + ("-" * 70) + "\n"
         for person in person_list:
             office_name = person.office.name if person.office is not None \
@@ -349,7 +367,7 @@ class Dojo(object):
             livingspace_name = person.livingspace.name \
                 if staff_or_fellow == "fellow" and \
                 person.livingspace is not None else "-"
-            print_out += "{}\t{}\t\t{}\t{}\n".format(
+            print_out += "{}\t\t{}\t\t{}\t\t{}\n".format(
                 person.ID, person.name.upper(), office_name.upper(),
                 livingspace_name.upper())
         if len(print_out) > 125:
@@ -439,14 +457,14 @@ class Dojo(object):
                     allocated[person.office.name.title()] = []
                 allocated[person.office.name.title()].append(person)
             else:
-                unallocated["office"].append(person)
+                unallocated["office"].append(person.ID.upper())
             try:
                 if person.livingspace is not None:
                     if person.livingspace.name.title() not in allocated:
                         allocated[person.livingspace.name.title()] = []
                     allocated[person.livingspace.name.title()].append(person)
                 else:
-                    unallocated["livingspace"].append(person)
+                    unallocated["livingspace"].append(person.ID.upper())
             except:
                 pass
         return {"allocated": allocated, "unallocated": unallocated}

@@ -15,7 +15,7 @@ class DB(object):
         such as room collection, staff list and fellow list currently used
         in the application
         """
-        if db_name.strip() == "":
+        if not db_name.strip():
             db_name = self.generate_name()
         if self.db_exist(db_name):
             return "Database name already existed!" + \
