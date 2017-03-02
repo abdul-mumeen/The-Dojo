@@ -118,7 +118,7 @@ class TheDojo (cmd.Cmd):
     def do_load_state(self, arg):
         """Usage: load_state <sqlite_database>"""
         cprint("Loading a state will overwrite the current state!\n" +
-               "Do you want to continue", "cyan")
+               "Do you want to continue", "red")
         overwrite = input("(y/n): ")
         if overwrite.lower() == "y":
             self.dojo.load_state(arg['<sqlite_database>'])
