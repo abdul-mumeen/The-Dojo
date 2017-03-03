@@ -9,10 +9,11 @@ from rooms.livingspace import LivingSpace
 
 
 class DB(object):
+    room_type_mapping = {Office: "office", LivingSpace: "livingspace"}
     def save_state(self, db_name, rooms, person_list):
         """
-        This function save the state of the application by saving data
-        such as room collection, staff list and fellow list currently used
+        This function saves the state of the application by saving data
+        such as room collection, staff list and fellow list currently available
         in the application
         """
         if not db_name.strip():
@@ -29,7 +30,7 @@ class DB(object):
             self.insert_people(person_list, c)
             conn.commit()
             conn.close()
-            return "The state has been successfully saved with %s.sqlite" \
+            return "The state has been successfully saved in %s.sqlite" \
                    % db_name
 
     def insert_rooms(self, rooms, c):
@@ -39,8 +40,7 @@ class DB(object):
         """
         for room in rooms:
             try:
-                room_type = "office" if isinstance(room, Office) \
-                                                        else "livingspace"
+                room_type = room_type_mapping(type(room))
                 c.execute("INSERT INTO room_table (name, type, capacity) \
                           VALUES ('{}', '{}', '{}')".format(
                                 room.name, room_type, room.total_space))
