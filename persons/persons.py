@@ -1,6 +1,8 @@
 import random
 import string
 
+from termcolor import cprint
+
 
 class Person(object):
 
@@ -31,12 +33,14 @@ class Person(object):
 
     def print_me(self):
         first_name = self.name.split()[0].title()
-        print("{} {} has been successfully added.".format(
+        cprint("{} {} has been successfully added with ID {}.".format(
                                     self.designation.title(),
-                                    self.name.title()))
+                                    self.name.title(), self.ID.upper()),
+                                    "green")
         if self.office:
-            print("{} has been allocated the office {}".format(
-                            first_name, self.office.name.title()))
+            cprint("{} has been allocated the office {}".format(
+                            first_name, self.office.name.title()), 
+                            "green")
         else:
-            print("{} has been placed".format(first_name) +
-                  " on a waiting list for office")
+            cprint("{} has been placed".format(first_name)
+                  " on a waiting list for office", "yellow")
