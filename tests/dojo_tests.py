@@ -113,7 +113,7 @@ class TestPrintFunctions(TestCase):
         self.ndojo.print_room("Brown")
         output_2 = sys.stdout.getvalue().strip()
         output = output_2.replace(output_1, "")
-        self.assertEqual(ansi_escape.sub("", output)[:-1], "BROWN" + "\n" +
+        self.assertEqual(ansi_escape.sub("", output), "BROWN" + "\n" +
                          ("-" * 15) + "\nHASSAN EL-SAHEED")
 
     def test_print_allocation_to_screen(self):
@@ -453,7 +453,7 @@ class TestDatabase(TestCase):
         output = output.split("\n")
         self.assertEqual(ansi_escape.sub("", output[len(output) - 1]),
                          "The state has been "
-                         "successfully saved with pressure.sqlite")
+                         "successfully saved in pressure.sqlite")
         self.assertTrue(os.path.isfile("data/pressure.sqlite"))
         self.dojo.save_state("pressure")
         output = sys.stdout.getvalue().strip()
@@ -469,7 +469,7 @@ class TestDatabase(TestCase):
         output = output.split("\n")
         self.assertGreaterEqual(ansi_escape.sub("", output[len(output) - 1]),
                                 "The state has " +
-                                "been successfully saved with 2017.sqlite")
+                                "been successfully saved in 2017.sqlite")
 
     def test_load_state_file_not_exist(self):
         """ This function test if the file supplied exist """
