@@ -39,8 +39,8 @@ class Person(object):
                                     "green")
         if self.office:
             cprint("{} has been allocated the office {}".format(
-                            first_name, self.office.name.title()), 
+                            first_name, self.office.name.title()),
                             "green")
         else:
-            cprint("{} has been placed".format(first_name)
+            cprint("{} has been placed".format(first_name) +
                   " on a waiting list for office", "yellow")

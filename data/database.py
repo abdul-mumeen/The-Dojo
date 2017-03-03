@@ -40,7 +40,7 @@ class DB(object):
         """
         for room in rooms:
             try:
-                room_type = room_type_mapping(type(room))
+                room_type = self.room_type_mapping[type(room)]
                 c.execute("INSERT INTO room_table (name, type, capacity) \
                           VALUES ('{}', '{}', '{}')".format(
                                 room.name, room_type, room.total_space))
@@ -120,7 +120,7 @@ class DB(object):
             "select id, name, designation, office" +
             " from person_table WHERE designation = 'staff'")
         db_staff_list = c.fetchall()
-        staff_list = self.get_staffs_from_db_staffs(db_staff_list, rooms)
+        staff_list = self.get_staff_from_db_staff(db_staff_list, rooms)
         app_data = {"all_rooms": rooms, "staff_list": staff_list,
                     "fellow_list": fellow_list}
         conn.commit()
@@ -160,7 +160,7 @@ class DB(object):
             fellow_list.append(new_fellow)
         return fellow_list
 
-    def get_staffs_from_db_staffs(self, db_staff_list, rooms):
+    def get_staff_from_db_staff(self, db_staff_list, rooms):
         """
         This function extracts the collection of rooms from the
         rows of room returned from the database

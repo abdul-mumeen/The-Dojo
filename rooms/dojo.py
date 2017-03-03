@@ -166,8 +166,8 @@ class Dojo(object):
                                  for room in self.all_rooms]:
             if room_name.title() in {room.title()
                                      for room in self.allocated}:
-                for person in self.allocated[room_name.title()]:
-                    print_out += person.name.upper() + "\n"
+                print_out = "\n".join([person.name.upper()
+                    for person in self.allocated[room_name.title()]])
             else:
                 print_out = "No allocation for this room"
             print_out = room_name.upper() + "\n" + ("-" * 15) + "\n" + \
