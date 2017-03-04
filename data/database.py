@@ -18,7 +18,7 @@ class DB(object):
         """
         if not db_name.strip():
             db_name = self.generate_name()
-        if self.db_exist(db_name):
+        if self.db_exists(db_name):
             return "Database name already existed!" + \
                                     " Kindly choose another name."
         else:
@@ -53,34 +53,34 @@ class DB(object):
         save each person in the Database
         """
         for person in person_list:
-            office = person.office.name if person.office is not None else ""
+            office = person.office.name if person.office else ""
             c.execute(
                 "INSERT INTO person_table (id, name, designation, " +
                 "office) VALUES ('{}', '{}', '{}', '{}')".format(
                     person.ID, person.name, person.designation, office))
             if person.designation.lower() == "fellow":
                 livingSpace = person.livingspace.name if \
-                                person.livingspace is not None else ""
+                                person.livingspace else ""
                 c.execute("INSERT INTO livingspace_table (ids, \
                         wants_accommodation, livingspace) VALUES \
                             ('{}', '{}', '{}')".format(
                             person.ID,
                             person.wants_accommodation, livingSpace))
 
-    def db_exist(self, db_name):
+    def db_exists(self, db_name):
         """This function check if a database file exist"""
-        return True if os.path.isfile("data/{}.sqlite".format(db_name)) \
-            else False
+        return os.path.isfile("data/{}.sqlite".format(db_name))
 
     def generate_name(self):
         """
-        This function generate a database name from concatenating
+        This function generates a database name from concatenating
         the year, month, day, hour, minute and second of the moment
         """
-        i = datetime.datetime.now()
-        db_name = str(i.year) + str(i.month) + str(i.day) + str(i.hour) \
-            + str(i.minute) + str(i.second)
-        while self.db_exist(db_name):
+        date_time = datetime.datetime.now()
+        db_name = "".join([str(date_time.year), str(date_time.month),
+                           str(date_time.day), str(date_time.hour),
+                           str(date_time.minute), str(date_time.second)])
+        while self.db_exists(db_name):
             db_name = str(int(db_name) + 1)
         return db_name
 
@@ -133,9 +133,9 @@ class DB(object):
         rows of room returned from the database
         """
         rooms = []
+        rooms_mapping = {"office": Office, "livingspace": LivingSpace}
         for row in db_rooms:
-            new_room = Office(row[0]) if row[1].lower() == \
-                    "office" else LivingSpace(row[0])
+            new_room = rooms_mapping[row[1].lower()](row[0])
             rooms.append(new_room)
         return rooms
 
@@ -154,9 +154,7 @@ class DB(object):
                 else None
             new_fellow.wants_accommodation = row[4]
             new_fellow.livingspace = [room for room in rooms
-                if room.name.title() == row[5].title()][0] if row[5] and \
-                row[5].title() in [room.name.title() for room in rooms] \
-                else None
+                if room.name.title() == row[5].title()][0] if row[5] else None
             fellow_list.append(new_fellow)
         return fellow_list
 
