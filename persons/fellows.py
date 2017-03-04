@@ -1,3 +1,5 @@
+from termcolor import cprint
+
 from persons.persons import Person
 
 
@@ -13,10 +15,10 @@ class Fellow(Person):
         first_name = self.name.split()[0].title()
         super().print_me()
         if self.livingspace:
-            print("{} has been allocated ".format(first_name) +
+            cprint("{} has been allocated ".format(first_name) +
                   "the livingspace {}".format(
-                            self.livingspace.name.title()))
+                            self.livingspace.name.title()), "green")
         else:
             if self.wants_accommodation:
-                print("{} has been placed".format(first_name) +
-                      " on a waiting list for livingspace")
+                cprint("{} has been placed".format(first_name) +
+                      " on a waiting list for livingspace", "yellow")

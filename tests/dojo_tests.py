@@ -114,7 +114,7 @@ class TestPrintFunctions(TestCase):
         output_2 = sys.stdout.getvalue().strip()
         output = output_2.replace(output_1, "")
         self.assertEqual(ansi_escape.sub("", output), "BROWN" + "\n" +
-                         ("-" * 15) + "\nHASSAN EL-SAHEED")
+                         ("-" * 30) + "\nHASSAN EL-SAHEED")
 
     def test_print_allocation_to_screen(self):
         """ This function test the printing of allocated persons to screen"""
