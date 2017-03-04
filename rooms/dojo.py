@@ -3,6 +3,7 @@ import string
 import os
 
 from termcolor import cprint
+
 from persons.staffs import Staff
 from persons.fellows import Fellow
 from rooms.office import Office
@@ -26,7 +27,7 @@ class Dojo(object):
         by receiving an array of room names an the room type.
         """
         log = ""
-        if room_type.strip() != "" and len(room_name) > 0:
+        if room_type.strip() and len(room_name) > 0:
             if room_type.lower() == "office" or \
                                         room_type.lower() == "livingspace":
                 i = 0
@@ -75,14 +76,15 @@ class Dojo(object):
         """
         if name.strip():
             if designation.lower().strip() == "fellow":
-                fellow = self.add_fellow(name, wants_accommodation)
-                return fellow
+                return self.add_fellow(name, wants_accommodation)
             elif designation.lower().strip() == "staff":
                 if wants_accommodation.upper() == "Y":
                     cprint("Staff cannot request for a livingspace!", "red")
-                else:
+                elif wants_accommodation.upper() in ["", "N"]:
                     staff = self.add_staff(name)
                     return staff
+                else:
+                    cprint("Invalid wants_accommodation parameter", "red")
             else:
                 cprint("Person cannot be created due to invalid designation!",
                        "red")
@@ -143,6 +145,7 @@ class Dojo(object):
         This function randomly assign room to a person
         from a list of rooms that are available_room
         """
+        rooms_mapping = {Office: "office", LivingSpace: "livingspace"}
         available_rooms = self.get_available_rooms(room_type)
         if available_rooms:
             room = random.choice(available_rooms)
@@ -151,10 +154,7 @@ class Dojo(object):
             self.allocated[room.name.title()].append(person)
             return room
         else:
-            if room_type == Office:
-                self.unallocated["office"].append(person.ID.upper())
-            else:
-                self.unallocated["livingspace"].append(person.ID.upper())
+            self.unallocated[rooms_mapping[room_type]].append(person.ID.upper())
 
     def print_room(self, room_name):
         """"
@@ -170,7 +170,7 @@ class Dojo(object):
                     for person in self.allocated[room_name.title()]])
             else:
                 print_out = "No allocation for this room"
-            print_out = room_name.upper() + "\n" + ("-" * 15) + "\n" + \
+            print_out = room_name.upper() + "\n" + ("-" * 30) + "\n" + \
                 print_out
         else:
             print_out = "No such room as " + room_name.title()
@@ -183,10 +183,10 @@ class Dojo(object):
         """
         print_out = ""
         for room in self.allocated:
-            names = ""
+            names = []
             for person in self.allocated[room]:
-                names += person.name + ", "
-            names = names[:-2]
+                names.append(person.name)
+            names = ", ".join(names)
             print_out += room + "\n" + ("-" * len(names)) + \
                 "\n" + names + "\n\n"
         if not print_out:
@@ -194,6 +194,17 @@ class Dojo(object):
         else:
             self.write_to_file(print_out, file_name)
             cprint(print_out.upper(), "green")
+
+    def print_rooms(self, file_name=None):
+        """ This function prints out all available rooms """
+        room_names = []
+        for room in self.all_rooms:
+            room_names.append(room.name)
+            rooom_names = "\n".join(rooom_names)
+        if not room_names:
+            cprint("Nobody on the allocated list.", "yellow")
+        else:
+            cprint("List of all rooms\n" + room_names, "green")
 
     def print_unallocated(self, file_name=None):
         """ This function prints the list of unallocated persons"""
@@ -205,7 +216,7 @@ class Dojo(object):
                           if person.ID.upper() == id.upper()][0]
                 print_out += person.name.upper() + " - NO " + \
                     key.upper() + "\n"
-        if print_out == "":
+        if not print_out:
             cprint("Nobody on the unallocated list.", "yellow")
         else:
             print_out = "UNALLOCATED LIST\n\n" + print_out
@@ -214,7 +225,7 @@ class Dojo(object):
 
     def write_to_file(self, print_out, file_name):
         """ This function write a string to the file_name specified"""
-        if file_name is not None:
+        if file_name:
             file = open("data/%s.txt" % file_name, "w")
             file.write(print_out.upper())
             file.close()
@@ -233,7 +244,7 @@ class Dojo(object):
         or S for staffs
         """
         valid_string = string.ascii_uppercase + string.digits + "-"
-        output = False if input_val.strip() == "" or \
+        output = False if not input_val.strip() or \
             not set(input_val.upper()).issubset(set(valid_string)) or \
             input_val.upper()[0] not in ["F", "S"] or \
             len(input_val) != 7 else True
