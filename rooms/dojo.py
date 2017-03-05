@@ -28,8 +28,7 @@ class Dojo(object):
         """
         log = ""
         if room_type.strip() and len(room_name) > 0:
-            if room_type.lower() == "office" or \
-                                        room_type.lower() == "livingspace":
+            if room_type.lower() in ["office", "livingspace"]:
                 i = 0
                 for room in room_name:
                     if room.strip() == "":
@@ -39,7 +38,7 @@ class Dojo(object):
                     elif not room.isalpha() or room.lower() in \
                             ["office", "livingspace"]:
                         log += "Invalid {} name '{}' ".format(
-                                room_type, str(i)) + "supplied!"
+                                room_type, room.capitalize()) + "supplied!"
                     elif self.check_room_name_exist(room):
                         log += "The {} name '{}' ".format(
                                 room_type, room.title()) + "already existed."
@@ -64,14 +63,12 @@ class Dojo(object):
             cprint("An office called {} ".format(room_name) +
                    "has been successfully created", "green")
             self.all_rooms.append(new_room)
-        elif room_type == "livingspace":
+        else:
             new_room = LivingSpace(room_name)
             room_name = room_name.title()
             cprint("A livingspace called {} ".format(room_name) +
                    "has been successfully created", "green")
             self.all_rooms.append(new_room)
-        else:
-            cprint("Invalid room type", "red")
 
     def add_person(self, name, designation, wants_accommodation="N"):
         """
@@ -389,7 +386,7 @@ class Dojo(object):
         if len(print_out) > 125:
             cprint(print_out, "green")
         else:
-            cprint("This list is empty", "yellow")
+            cprint("This list is empty, no one has been added yet", "yellow")
 
     def load_people(self, file_name):
         response_mapping = ["Everyone", "Some people", "Nobody"]
