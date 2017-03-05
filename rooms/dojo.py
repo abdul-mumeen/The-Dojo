@@ -35,10 +35,14 @@ class Dojo(object):
                     if room.strip() == "":
                         log += "The {} at index {} ".format(
                                 room_type, str(i)) + "cannot be created" + \
-                                " due to empty name."
+                                " due to empty room name."
+                    elif not room.isalpha() or room.lower() in \
+                            ["office", "livingspace"]:
+                        log += "Invalid {} name '{}' ".format(
+                                room_type, str(i)) + "supplied!"
                     elif self.check_room_name_exist(room):
-                        log += "The {} at index {} ".format(
-                                room_type, str(i)) + "already existed."
+                        log += "The {} name '{}' ".format(
+                                room_type, room.title()) + "already existed."
                     else:
                         self.add_room(room.title(), room_type)
                     i += 1
@@ -197,14 +201,14 @@ class Dojo(object):
             self.write_to_file(print_out, file_name)
             cprint(print_out.upper(), "green")
 
-    def print_rooms(self, file_name=None):
+    def print_rooms(self):
         """ This function prints out all available rooms """
         room_names = []
         for room in self.all_rooms:
             room_names.append(room.name)
-            room_names = "\n".join(room_names)
+        room_names = "\n".join(room_names)
         if not room_names:
-            cprint("Nobody on the allocated list.", "yellow")
+            cprint("No room added yet", "yellow")
         else:
             cprint("List of all rooms\n" + room_names, "green")
 

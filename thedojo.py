@@ -82,7 +82,12 @@ class TheDojo (cmd.Cmd):
         fellow = arg['fellow']
         designation = "fellow" if fellow else "staff"
         accommodation = arg['<wants_accommodation>']
-        accommodation = "N" if not accommodation else accommodation
+        if accommodation.lower() not in ["y", "yes", "no", "n"]:
+            cprint("Invalid option for accommodation, availble options are;"
+                   " Y, N, Yes and No", "red")
+            return
+        accommodation = "N" if accommodation.lower() in ["n", "no"] \
+            else "Y"
         new_person = self.dojo.add_person(fname + " " + lname,
                                           designation, accommodation)
         if new_person:
@@ -121,6 +126,11 @@ class TheDojo (cmd.Cmd):
         overwrite = input("(y/n): ")
         if overwrite.lower() == "y":
             self.dojo.load_state(arg['<sqlite_database>'])
+
+    @docopt_cmd
+    def do_print_rooms(self, arg):
+        """Usage: print_rooms"""
+        self.dojo.print_rooms()
 
     @docopt_cmd
     def do_quit(self, arg):

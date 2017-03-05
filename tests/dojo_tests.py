@@ -58,7 +58,7 @@ class TestCreateRoom(TestCase):
         log = sys.stdout.getvalue().strip()
         self.assertEqual(
             ansi_escape.sub("", log),
-            "The office at index 0 cannot be created due to empty name.")
+            "The office at index 0 cannot be created due to empty room name.")
 
     def test_invalid_in_array_input(self):
         """ This function test for empty room name in array rooms"""
@@ -67,7 +67,8 @@ class TestCreateRoom(TestCase):
         log = log.split("\n")
         self.assertEqual(
             ansi_escape.sub("", log[len(log) - 1]),
-            "The livingspace at index 1 cannot be created due to empty name.")
+            "The livingspace at index 1 cannot be created"
+            " due to empty room name.")
 
     def test_invalid_room_type(self):
         """ This function test for invalid room type """
@@ -85,7 +86,7 @@ class TestCreateRoom(TestCase):
         log = log.split("\n")
         self.assertEqual(
             ansi_escape.sub("", log[len(log) - 1]),
-            "The office at index 0 already existed.")
+            "The office name 'Blue' already existed.")
 
     def test_duplicate_livingspace_name(self):
         """ This function test for creation of duplicate livingspace names """
@@ -95,7 +96,7 @@ class TestCreateRoom(TestCase):
         log = log.split("\n")
         self.assertEqual(
             ansi_escape.sub("", log[len(log) - 1]),
-            "The livingspace at index 2 already existed.")
+            "The livingspace name 'Black' already existed.")
 
 
 class TestPrintFunctions(TestCase):
