@@ -45,7 +45,7 @@ class DB(object):
                 c.execute("INSERT INTO room_table (name, type, capacity) \
                           VALUES ('{}', '{}', '{}')".format(
                                 room.name, room_type, room.total_space))
-            except sqlite3.IntegrityError:
+            except:
                 print('ERROR: failed to insert room {}'.format(room.name))
 
     def insert_people(self, person_list, c):

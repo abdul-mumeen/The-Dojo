@@ -98,6 +98,16 @@ class TestCreateRoom(TestCase):
             ansi_escape.sub("", log[len(log) - 1]),
             "The livingspace name 'Black' already existed.")
 
+    def test_alphanumeric_room_name(self):
+        """ This function test for invalid alphanumeric livingspace name """
+        self.ndojo.create_room(
+                    ["Brown", "Bl9ck", "Black"], "livingspace")
+        log = sys.stdout.getvalue().strip()
+        log = log.split("\n")
+        self.assertEqual(
+            ansi_escape.sub("", log[len(log) - 1]),
+            "Invalid livingspace name 'Bl9ck' supplied!")
+
 
 class TestPrintFunctions(TestCase):
     def setUp(self):
@@ -107,6 +117,17 @@ class TestPrintFunctions(TestCase):
         self.ndojo.reset()
 
     def test_print_rooms(self):
+        """ This function test the printing of rooms currently available """
+        self.ndojo.print_rooms()
+        output = sys.stdout.getvalue().strip()
+        self.assertEqual(ansi_escape.sub("", output), "No room added yet")
+        self.ndojo.create_room(["Brown"], "office")
+        self.ndojo.print_rooms()
+        output = sys.stdout.getvalue().strip()
+        output = output.split("\n")
+        self.assertEqual(ansi_escape.sub("", output[len(output) - 1]), "Brown")
+
+    def test_print_room(self):
         """ This function test the printing of names of occupant of a room """
         self.ndojo.create_room(["Brown"], "office")
         self.ndojo.add_person("Hassan El-Saheed", "fellow", "Y")
@@ -130,6 +151,21 @@ class TestPrintFunctions(TestCase):
             ansi_escape.sub("", output)[:-2], "List not written to file,"
             " no file name supplied\nBLUE\n"
             "----------------------------\nHASSAN EL-SAHEED, MIKE TYSON")
+
+    def test_print_list_of_staff(self):
+        """ This function test the printing of list of staff """
+        self.ndojo.print_person_list("fellow")
+        output = sys.stdout.getvalue().strip()
+        output = output.split("\n")
+        self.assertEqual(ansi_escape.sub("", output[len(output) - 1]),
+                         "This list is empty, no one has been added yet")
+        new_fellow = self.ndojo.add_person("Hassan El-Saheed", "fellow", "Y")
+        self.ndojo.print_person_list("fellow")
+        output = sys.stdout.getvalue().strip()
+        output = output.split("\n")
+        self.assertEqual(ansi_escape.sub("", output[len(output) - 2]),
+                         "{}\t\tHASSAN EL-SAHEED\t\t-\t\t-".format(
+                            new_fellow.ID))
 
     def test_print_allocation_to_file(self):
         """ This function test the printing of allocated persons to file"""
@@ -174,6 +210,11 @@ class TestAddPersons(TestCase):
         self.assertIsInstance(new_staff, Staff)
         self.assertEqual(new_staff.name, "Andy Carroll")
         self.assertIsInstance(new_staff, Person)
+        new_staff.print_me()
+        output = sys.stdout.getvalue().strip()
+        output = output.split("\n")
+        self.assertEqual(ansi_escape.sub("", output[len(output) - 1]),
+                         "Andy has been placed on a waiting list for office")
 
     def test_add_fellow(self):
         """ This function test for successful adding of fellow """
@@ -182,6 +223,22 @@ class TestAddPersons(TestCase):
         self.assertEqual(new_fellow.name, "Jeremy Johnson")
         self.assertIsInstance(new_fellow, Person)
         self.assertEqual(new_fellow.livingspace, None)
+
+    def test_add_fellow_allocate_to_room(self):
+        """
+        This function test for successful adding and
+        allocation of fellow
+        """
+        self.dojo.create_room(["Idanre"], "office")
+        new_fellow = self.dojo.add_person("Katwe Queen", "fellow", "Y")
+        new_fellow.print_me()
+        output = sys.stdout.getvalue().strip()
+        output = output.split("\n")
+        self.assertEqual(ansi_escape.sub("", output[len(output) - 2]),
+                         "Katwe has been allocated the office Idanre")
+        self.assertEqual(ansi_escape.sub("", output[len(output) - 1]),
+                         "Katwe has been placed on a waiting list for "
+                         "livingspace")
 
     def test_add_person_livingspace_for_staff(self):
         """ This function checks for invalid inputs """
