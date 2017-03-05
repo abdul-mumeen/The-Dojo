@@ -16,9 +16,9 @@ class Fellow(Person):
         super().print_me()
         if self.livingspace:
             cprint("{} has been allocated ".format(first_name) +
-                  "the livingspace {}".format(
+                   "the livingspace {}".format(
                             self.livingspace.name.title()), "green")
         else:
             if self.wants_accommodation:
                 cprint("{} has been placed".format(first_name) +
-                      " on a waiting list for livingspace", "yellow")
+                       " on a waiting list for livingspace", "yellow")

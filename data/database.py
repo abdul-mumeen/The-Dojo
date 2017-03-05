@@ -10,6 +10,7 @@ from rooms.livingspace import LivingSpace
 
 class DB(object):
     room_type_mapping = {Office: "office", LivingSpace: "livingspace"}
+
     def save_state(self, db_name, rooms, person_list):
         """
         This function saves the state of the application by saving data
@@ -148,12 +149,14 @@ class DB(object):
         for row in db_fellow_list:
             new_fellow = Fellow(row[1], row[2])
             new_fellow.ID = row[0]
-            new_fellow.office = [room for room in rooms
+            new_fellow.office = [
+                room for room in rooms
                 if room.name.title() == row[3].title()][0] if row[3] and \
                 row[3].title() in [room.name.title() for room in rooms] \
                 else None
             new_fellow.wants_accommodation = row[4]
-            new_fellow.livingspace = [room for room in rooms
+            new_fellow.livingspace = [
+                room for room in rooms
                 if room.name.title() == row[5].title()][0] if row[5] else None
             fellow_list.append(new_fellow)
         return fellow_list
@@ -167,7 +170,8 @@ class DB(object):
         for row in db_staff_list:
             new_staff = Staff(row[1], row[2])
             new_staff.ID = row[0]
-            new_staff.office = [room for room in rooms
+            new_staff.office = [
+                room for room in rooms
                 if room.name.title() == row[3].title()][0] if row[3] and \
                 row[3].title() in [room.name.title() for room in rooms] \
                 else None
