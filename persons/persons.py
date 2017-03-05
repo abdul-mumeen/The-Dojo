@@ -36,11 +36,11 @@ class Person(object):
         cprint("{} {} has been successfully added with ID {}.".format(
                                     self.designation.title(),
                                     self.name.title(), self.ID.upper()),
-                                    "green")
+               "green")
         if self.office:
             cprint("{} has been allocated the office {}".format(
                             first_name, self.office.name.title()),
-                            "green")
+                   "green")
         else:
             cprint("{} has been placed".format(first_name) +
-                  " on a waiting list for office", "yellow")
+                   " on a waiting list for office", "yellow")

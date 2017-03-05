@@ -58,13 +58,13 @@ class Dojo(object):
         if room_type == "office":
             new_room = Office(room_name)
             cprint("An office called {} ".format(room_name) +
-                  "has been successfully created", "green")
+                   "has been successfully created", "green")
             self.all_rooms.append(new_room)
         elif room_type == "livingspace":
             new_room = LivingSpace(room_name)
             room_name = room_name.title()
             cprint("A livingspace called {} ".format(room_name) +
-                  "has been successfully created", "green")
+                   "has been successfully created", "green")
             self.all_rooms.append(new_room)
         else:
             cprint("Invalid room type", "red")
@@ -154,7 +154,8 @@ class Dojo(object):
             self.allocated[room.name.title()].append(person)
             return room
         else:
-            self.unallocated[rooms_mapping[room_type]].append(person.ID.upper())
+            self.unallocated[rooms_mapping[room_type]]\
+                .append(person.ID.upper())
 
     def print_room(self, room_name):
         """"
@@ -166,8 +167,9 @@ class Dojo(object):
                                  for room in self.all_rooms]:
             if room_name.title() in {room.title()
                                      for room in self.allocated}:
-                print_out = "\n".join([person.name.upper()
-                    for person in self.allocated[room_name.title()]])
+                print_out = "\n".join(
+                    [person.name.upper()
+                     for person in self.allocated[room_name.title()]])
             else:
                 print_out = "No allocation for this room"
             print_out = room_name.upper() + "\n" + ("-" * 30) + "\n" + \
@@ -200,7 +202,7 @@ class Dojo(object):
         room_names = []
         for room in self.all_rooms:
             room_names.append(room.name)
-            rooom_names = "\n".join(rooom_names)
+            room_names = "\n".join(room_names)
         if not room_names:
             cprint("Nobody on the allocated list.", "yellow")
         else:
@@ -295,13 +297,13 @@ class Dojo(object):
             cprint("Staff cannot be moved to a livingspace", "red")
         elif isinstance(room, LivingSpace):
             if self.fellow_list[index].wants_accommodation:
-                if self.fellow_list[index].livingspace is not None:
+                if self.fellow_list[index].livingspace:
                     if self.fellow_list[index].livingspace.name.lower() != \
                             new_room_name.lower():
-                        self.remove_from_allocated(person_id)
+                        self.remove_from_allocated(person_id, LivingSpace)
                     else:
                         cprint("Fellow is currently assigned to this" +
-                              " livingspace", "yellow")
+                               " livingspace", "yellow")
                         return
                 self.fellow_list[index].livingspace = room
                 self.add_room_to_allocated(new_room_name)
@@ -311,15 +313,15 @@ class Dojo(object):
                         .remove(self.fellow_list[index].ID)
                 self.allocated[new_room_name].append(self.fellow_list[index])
                 cprint("Fellow has been successfully " +
-                      "reallocated to livingspace " + new_room_name, "green")
+                       "reallocated to livingspace " + new_room_name, "green")
             else:
                 cprint("Fellow does not want a livingspace", "red")
         else:
             if person_id.upper()[0] == "S":
-                if self.staff_list[index].office is not None:
+                if self.staff_list[index].office:
                     if self.staff_list[index].office.name.lower() != \
                             new_room_name.lower():
-                        self.remove_from_allocated(person_id)
+                        self.remove_from_allocated(person_id, Office)
                     else:
                         cprint("Staff is currently assigned to this office",
                                "yellow")
@@ -331,12 +333,12 @@ class Dojo(object):
                         .remove(self.staff_list[index].ID)
                 self.allocated[new_room_name].append(self.staff_list[index])
                 cprint("Staff has been successfully reallocated to office " +
-                      new_room_name, "green")
+                       new_room_name, "green")
             else:
-                if self.fellow_list[index].office is not None:
+                if self.fellow_list[index].office:
                     if self.fellow_list[index].office.name.lower() != \
                             new_room_name.lower():
-                        self.remove_from_allocated(person_id)
+                        self.remove_from_allocated(person_id, Office)
                     else:
                         cprint("Fellow is currently assigned to this office",
                                "yellow")
@@ -348,39 +350,35 @@ class Dojo(object):
                         .remove(self.fellow_list[index].ID)
                 self.allocated[new_room_name].append(self.fellow_list[index])
                 cprint("Fellow has been successfully reallocated to office " +
-                      new_room_name, "green")
+                       new_room_name, "green")
 
     def add_room_to_allocated(self, room_name):
         """ this function add a new room to the room allocated list """
         if room_name.title() not in self.allocated:
             self.allocated[room_name.title()] = []
 
-    def remove_from_allocated(self, person_id):
-        """ this function remove a person from previously allocated room"""
-        for key in self.allocated:
-            for i in range(len(self.allocated[key])):
-                if self.allocated[key][i].ID.upper() == person_id.upper():
-                    self.allocated[key].pop(i)
-                    return True
+    def remove_from_allocated(self, person_id, room_type):
+        """ This function remove a person from previously allocated room"""
+        person = next((person for person in self.staff_list + self.fellow_list
+                       if person.ID.upper() == person_id.upper()), None)
+        if person:
+            key = person.office.name.title() if room_type == Office else \
+                person.livingspace.name.title()
+            self.allocated[key].remove(person)
+            return True
 
     def print_person_list(self, staff_or_fellow):
-        """ This function print a list of staff or fellow and their details """
-        list_header = ""
-        if staff_or_fellow == "staff":
-            person_list = self.staff_list
-            list_header = "Staff List\n"
-        else:
-            person_list = self.fellow_list
-            list_header = "Fellow List\n"
+        """This function print a list of staff or fellow and their details"""
+        person_mapping = {"staff": [self.staff_list, "Staff List\n"],
+                          "fellow": [self.fellow_list, "Fellow List\n"]}
+        person_list, list_header = person_mapping[staff_or_fellow]
 
         list_header += "ID\t\tNAME\t\tOFFICE NAME\tLIVINGSPACE\n"
         print_out = list_header + ("-" * 70) + "\n"
         for person in person_list:
-            office_name = person.office.name if person.office is not None \
-                                                                    else "-"
+            office_name = person.office.name if person.office else "-"
             livingspace_name = person.livingspace.name \
-                if staff_or_fellow == "fellow" and \
-                person.livingspace is not None else "-"
+                if staff_or_fellow == "fellow" and person.livingspace else "-"
             print_out += "{}\t\t{}\t\t{}\t\t{}\n".format(
                 person.ID, person.name.upper(), office_name.upper(),
                 livingspace_name.upper())
@@ -390,6 +388,7 @@ class Dojo(object):
             cprint("This list is empty", "yellow")
 
     def load_people(self, file_name):
+        response_mapping = ["Everyone", "Some people", "Nobody"]
         if os.path.isfile("data/{}.txt".format(file_name)):
             file = open("data/{}.txt".format(file_name), "r")
             content = file.read()
@@ -397,31 +396,35 @@ class Dojo(object):
             if content.strip():
                 content = content.split("\n")
                 line = 1
-                error = False
+                error = 0
                 for person_detail in content:
                     if person_detail.strip():
                         person_detail = person_detail.strip().split()
                         name = person_detail[0] + " " + person_detail[1]
                         if len(person_detail) == 3:
                             person = self.add_person(name, person_detail[2])
-                            if person is None:
-                                cprint("line {} was not loaded ".format(line) +
-                                      "because of the above^^ reason", "red")
-                                error = True
+                            if not person:
+                                cprint(
+                                    "line {} was not loaded ".format(line) +
+                                    "because of the above^^ reason", "red")
+                                error += 1
                         elif len(person_detail) == 4:
                             person = self.add_person(name, person_detail[2],
                                                      person_detail[3])
-                            if person is None:
-                                cprint("line {} was not loaded ".format(line) +
-                                      "because of the above^^ reason", "red")
-                                error = True
+                            if not person:
+                                cprint(
+                                    "line {} was not loaded ".format(line) +
+                                    "because of the above^^ reason", "red")
+                                error += 1
                         else:
                             cprint("line {} was not loaded ".format(line) +
-                                  "because of invalid parameters supplied",
-                                  "red")
-                            error = True
+                                   "because of invalid parameters supplied",
+                                   "red")
+                            error += 1
                     line += 1
-                load_ran = "Everyone" if not error else "Some people"
+                if error:
+                    error = 2 if error >= line - 1 else 1
+                load_ran = response_mapping[error]
                 cprint(load_ran + " on the list have been successfully loaded",
                        "green")
             else:
@@ -434,7 +437,7 @@ class Dojo(object):
         This function save state by storing data from the
         application's data structure into a database
         """
-        db_name = "" if db_name is None else db_name
+        db_name = "" if not db_name else db_name
         new_db = DB()
         person_list = self.staff_list + self.fellow_list
         log = new_db.save_state(db_name, self.all_rooms, person_list)
@@ -456,7 +459,7 @@ class Dojo(object):
             self.allocated = allocations["allocated"]
             self.unallocated = allocations["unallocated"]
             cprint("Data in {}.sqlite have been successfully loaded"
-                  .format(db_name), "green")
+                   .format(db_name), "green")
         else:
             cprint("File not found", "yellow")
 
@@ -468,14 +471,14 @@ class Dojo(object):
         allocated = {}
         unallocated = {"office": [], "livingspace": []}
         for person in self.staff_list + self.fellow_list:
-            if person.office is not None:
+            if person.office:
                 if person.office.name.title() not in allocated:
                     allocated[person.office.name.title()] = []
                 allocated[person.office.name.title()].append(person)
             else:
                 unallocated["office"].append(person.ID.upper())
             try:
-                if person.livingspace is not None:
+                if person.livingspace:
                     if person.livingspace.name.title() not in allocated:
                         allocated[person.livingspace.name.title()] = []
                     allocated[person.livingspace.name.title()].append(person)

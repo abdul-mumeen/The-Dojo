@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 import cmd
 import os
-import sys
 
 from docopt import docopt, DocoptExit
 from termcolor import cprint
@@ -21,7 +20,7 @@ def docopt_cmd(func):
             # The DocoptExit is thrown when the args do not match.
             # It prints a message to the user and the usage block.
             cprint("Invalid Command: the value(s) are not entered " +
-                  "correctly!\nKindly check the usage bellow", "yellow")
+                   "correctly!\nKindly check the usage bellow", "yellow")
             cprint(e, "cyan")
             return
         except:
@@ -128,4 +127,6 @@ class TheDojo (cmd.Cmd):
         """Usage: quit"""
         cprint("=========== Good Bye =============!\n", "green")
         exit()
+
+
 TheDojo().cmdloop()
