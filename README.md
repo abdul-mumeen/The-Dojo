@@ -15,7 +15,7 @@ Install python 3 on the system.
 On the terminal, run the commands below;
 ```
 $ sudo apt-get install python3-dev
-$ pip install python-virtualenv
+$ pip install virtualenv
 ```
 
 #### On a windows system
@@ -31,7 +31,7 @@ On the commandline/terminal, run the command;
 git clone https://github.com/andela-aolasode/The-Dojo.git
 cd The-Dojo
 
-virtualenv --python python3 venv-dojo
+virtualenv --python=python3 venv-dojo
 source venv-dojo/bin/activate
 
 pip install -r requirements.txt
@@ -45,6 +45,8 @@ While still inside The-Dojo folder, run `nosetests` to check the testcases and r
 
 * [Docopt](http://docopt.org/) - A console framework that define the interface for a command-line app, and automatically generate a parser for it.
 * [Nose](https://pypi.python.org/pypi/nose/1.3.7) - The python framework that extends the test loading and running features of unittest, making it easier to write, find and run tests.
+* [Termcolor](https://pypi.python.org/pypi/termcolor) - This is a python framework for ANSII Color formatting for output in terminal.
+* [Pyfiglet](https://pypi.python.org/pypi/pyfiglet) - This is a full port of FIGlet (http://www.figlet.org/) into pure python. It takes ASCII text and renders it in ASCII art fonts
 
 ## Authors
 
