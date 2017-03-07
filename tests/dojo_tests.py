@@ -115,6 +115,8 @@ class TestPrintFunctions(TestCase):
 
     def tearDown(self):
         self.ndojo.reset()
+        if os.path.isfile("data/test_file.txt"):
+            os.remove("data/test_file.txt")
 
     def test_print_rooms(self):
         """ This function test the printing of rooms currently available """
@@ -125,7 +127,8 @@ class TestPrintFunctions(TestCase):
         self.ndojo.print_rooms()
         output = sys.stdout.getvalue().strip()
         output = output.split("\n")
-        self.assertEqual(ansi_escape.sub("", output[len(output) - 1]), "Brown")
+        self.assertEqual(ansi_escape.sub("", output[len(output) - 1]),
+                         "Brown - Office")
 
     def test_print_room(self):
         """ This function test the printing of names of occupant of a room """
@@ -176,7 +179,7 @@ class TestPrintFunctions(TestCase):
         file = open("data/test_file.txt", "r")
         names = file.readlines()
         file.close()
-        self.assertEqual(names[2][:-1], "HASSAN EL-SAHEED, MIKE TYSON")
+        self.assertEqual(names[3][:-1], "HASSAN EL-SAHEED, MIKE TYSON")
 
     def test_print_unallocated_to_screen(self):
         """ This function test the printing of unallocated persons to screen"""
@@ -194,7 +197,7 @@ class TestPrintFunctions(TestCase):
         file = open("data/test_file.txt", "r")
         names = file.readlines()
         file.close()
-        self.assertEqual(names[2], "MIKE TYSON - NO OFFICE\n")
+        self.assertEqual(names[3], "MIKE TYSON - NO OFFICE\n")
 
 
 class TestAddPersons(TestCase):
