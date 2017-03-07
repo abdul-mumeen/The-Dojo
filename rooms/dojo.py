@@ -200,9 +200,11 @@ class Dojo(object):
 
     def print_rooms(self):
         """ This function prints out all available rooms """
+        room_type_mapping = {Office: "Office", LivingSpace: "Livingspace"}
         room_names = []
         for room in self.all_rooms:
-            room_names.append(room.name)
+            room_names.append(
+                " - ".join([room.name, room_type_mapping[type(room)]]))
         room_names = "\n".join(room_names)
         if not room_names:
             cprint("No room added yet", "yellow")
@@ -229,12 +231,30 @@ class Dojo(object):
     def write_to_file(self, print_out, file_name):
         """ This function write a string to the file_name specified"""
         if file_name:
-            file = open("data/%s.txt" % file_name, "w")
-            file.write(print_out.upper())
-            file.close()
-            cprint("List have been successfully written to file", "green")
+            if os.path.isfile("data/%s.txt" % file_name):
+                option = ""
+                cprint("A file with the name supplied already exist.",
+                       "yellow")
+                cprint("Press a - to append, w - to overwrite, c - to cancel",
+                       "yellow")
+                while option.lower() not in ["a", "w", "c"]:
+                    option = input("a, w or c: ")
+                self.execute_write_to_file(print_out, file_name, option.lower())
+            else:
+                self.execute_write_to_file(print_out, file_name, "w")
         else:
             cprint("List not written to file, no file name supplied", "green")
+
+    def execute_write_to_file(self, print_out, file_name, option):
+        option_mapping = {"a": "appended", "w": "written"}
+        if option == "c":
+            cprint("Write to file cancelled", "yellow")
+        else:
+            file = open("data/%s.txt" % file_name, "{}".format(option))
+            file.write("\n" + print_out.upper())
+            file.close()
+            cprint("List have been successfully {} to file '{}.txt'"
+                   .format(option_mapping[option], file_name), "green")
 
     def reset(self):
         """ This function reset Dojo to it initializatio stage"""
@@ -484,7 +504,8 @@ class Dojo(object):
                         allocated[person.livingspace.name.title()] = []
                     allocated[person.livingspace.name.title()].append(person)
                 else:
-                    unallocated["livingspace"].append(person.ID.upper())
+                    if person.wants_accommodation:
+                        unallocated["livingspace"].append(person.ID.upper())
             except:
                 pass
         return {"allocated": allocated, "unallocated": unallocated}
