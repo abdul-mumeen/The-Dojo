@@ -1,2 +1,3 @@
 vdojo/
 *.pyc
+.coverage

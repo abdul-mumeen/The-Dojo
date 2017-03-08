@@ -1,4 +1,5 @@
 # The Dojo
+[![Build Status](https://travis-ci.org/andela-aolasode/The-Dojo.svg?branch=ft-save-state-and-load-state)](https://travis-ci.org/andela-aolasode/The-Dojo) [![Coverage Status](https://coveralls.io/repos/github/andela-aolasode/The-Dojo/badge.svg?branch=ft-save-state-and-load-state)](https://coveralls.io/github/andela-aolasode/The-Dojo?branch=ft-save-state-and-load-state)
 
 This is an open source console application that help users manage the allocation of rooms. This application allows the creation of two types of person which are `staff` and `fellow`. Both staff and fellow can be randomly allocated to an office when available while only a fellow can be alloacted to a livingspace on request. The state of each application can be saved to and loaded from a database. The application is written in python and uses docopt framework to give the user an interactive user experience.
 
