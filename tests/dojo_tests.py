@@ -181,6 +181,14 @@ class TestPrintFunctions(TestCase):
         file.close()
         self.assertEqual(names[3][:-1], "HASSAN EL-SAHEED, MIKE TYSON")
 
+    def test_print_allocation_empty(self):
+        """ This function test the printing of empty allocation list"""
+        self.ndojo.print_allocation()
+        output = sys.stdout.getvalue().strip()
+        output = output.split("\n")
+        self.assertEqual(ansi_escape.sub("", output[len(output) - 1]),
+                         "Nobody on the allocated list.")
+
     def test_print_unallocated_to_screen(self):
         """ This function test the printing of unallocated persons to screen"""
         self.ndojo.add_person("Mike Tyson", "staff")
@@ -263,6 +271,19 @@ class TestAddPersons(TestCase):
             ansi_escape.sub("", output),
             "Person cannot be created due to invalid designation!")
 
+    def test_invalid_wants_accomodation(self):
+        """ This function test for invalid wants_accommodation parameter """
+        new_staff = self.dojo.add_person("Andy Carroll", "staff", "yo")
+        output = sys.stdout.getvalue().strip()
+        output = output.split("\n")
+        self.assertEqual(ansi_escape.sub("", output[len(output) - 1]),
+                         "Invalid wants_accommodation parameter")
+        new_fellow = self.dojo.add_person("Andy Carroll", "fellow", "lala")
+        output = sys.stdout.getvalue().strip()
+        output = output.split("\n")
+        self.assertEqual(ansi_escape.sub("", output[len(output) - 1]),
+                         "Invalid wants_accommodation parameter")
+
 
 class TestReallocate(TestCase):
     def setUp(self):
@@ -289,7 +310,7 @@ class TestReallocate(TestCase):
         output = sys.stdout.getvalue().strip()
         self.assertEqual(ansi_escape.sub("", output), "Invalid id supplied")
 
-    def test_rellocate_to_same_room(self):
+    def test_rellocate_fellow_to_same_office(self):
         self.dojo.create_room(["Blue"], "office")
         new_fellow = self.dojo.add_person("Jeremy Johnson", "fellow")
         self.dojo.reallocate_person(new_fellow.ID, "Blue")
@@ -297,6 +318,24 @@ class TestReallocate(TestCase):
         output = output.split("\n")
         self.assertEqual(ansi_escape.sub("", output[len(output) - 1]),
                          "Fellow is currently assigned to this office")
+
+    def test_rellocate_staff_to_same_office(self):
+        self.dojo.create_room(["Blue"], "office")
+        new_fellow = self.dojo.add_person("Jeremy Johnson", "staff")
+        self.dojo.reallocate_person(new_fellow.ID, "Blue")
+        output = sys.stdout.getvalue().strip()
+        output = output.split("\n")
+        self.assertEqual(ansi_escape.sub("", output[len(output) - 1]),
+                         "Staff is currently assigned to this office")
+
+    def test_rellocate_to_same_livingspace(self):
+        self.dojo.create_room(["Blue"], "livingspace")
+        new_fellow = self.dojo.add_person("Jeremy Johnson", "fellow", "Y")
+        self.dojo.reallocate_person(new_fellow.ID, "Blue")
+        output = sys.stdout.getvalue().strip()
+        output = output.split("\n")
+        self.assertEqual(ansi_escape.sub("", output[len(output) - 1]),
+                         "Fellow is currently assigned to this livingspace")
 
     def test_fellow_not_existing_id(self):
         """ This function test for fellow existing id"""
@@ -422,8 +461,8 @@ class TestLoadPeople(TestCase):
     def test_invalid_content(self):
         """ This function test if the file supplied contains invalid input """
         file_content = "OLUWAFEMI SULE FELLOW Y\n\
-                        DOMINIC WALTERS STAFF Y\n\
-                        SIMON PATTERSON FELLOW Y\n"
+                        SIMON PATTERSON PIPER\n\
+                        DOMINIC WALTERS STAFF Y\n"
         file = open("data/people.txt", "w")
         file.write(file_content.upper())
         file.close()
@@ -431,8 +470,17 @@ class TestLoadPeople(TestCase):
         output = sys.stdout.getvalue().strip()
         output = output.split("\n")
         self.assertEqual(
+            ansi_escape.sub("", output[len(output) - 5]),
+            "Person cannot be created due to invalid designation!")
+        self.assertEqual(
+            ansi_escape.sub("", output[len(output) - 4]),
+            "line 2 was not loaded because of the above^^ reason")
+        self.assertEqual(
             ansi_escape.sub("", output[len(output) - 3]),
             "Staff cannot request for a livingspace!")
+        self.assertEqual(
+            ansi_escape.sub("", output[len(output) - 2]),
+            "line 3 was not loaded because of the above^^ reason")
         self.assertEqual(
             ansi_escape.sub("", output[len(output) - 1]),
             "Some people on the list have been successfully loaded")
