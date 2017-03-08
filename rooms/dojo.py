@@ -76,19 +76,21 @@ class Dojo(object):
         or add_staff function as the case may be.
         """
         if name.strip():
-            if designation.lower().strip() == "fellow":
-                return self.add_fellow(name, wants_accommodation)
-            elif designation.lower().strip() == "staff":
-                if wants_accommodation.upper() == "Y":
-                    cprint("Staff cannot request for a livingspace!", "red")
-                elif wants_accommodation.upper() in ["", "N"]:
-                    staff = self.add_staff(name)
-                    return staff
+            if wants_accommodation.lower() in ["yes", "y", "no", "n"]:
+                if designation.lower().strip() == "fellow":
+                    return self.add_fellow(name, wants_accommodation)
+                elif designation.lower().strip() == "staff":
+                    if wants_accommodation.upper() == "Y":
+                        cprint("Staff cannot request for a livingspace!",
+                               "red")
+                    else:
+                        staff = self.add_staff(name)
+                        return staff
                 else:
-                    cprint("Invalid wants_accommodation parameter", "red")
+                    cprint("Person cannot be created due to invalid" +
+                           " designation!", "red")
             else:
-                cprint("Person cannot be created due to invalid designation!",
-                       "red")
+                cprint("Invalid wants_accommodation parameter", "red")
         else:
             cprint("Person cannot be created with an empty name!", "red")
 
