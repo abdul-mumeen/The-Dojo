@@ -147,7 +147,7 @@ class DB(object):
         """
         fellow_list = []
         for row in db_fellow_list:
-            new_fellow = Fellow(row[1], row[2])
+            new_fellow = Fellow(row[1])
             new_fellow.ID = row[0]
             new_fellow.office = [
                 room for room in rooms
