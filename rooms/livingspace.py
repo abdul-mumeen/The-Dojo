@@ -1,4 +1,4 @@
-from rooms.rooms import Room
+from rooms.room import Room
 
 
 class LivingSpace(Room):
