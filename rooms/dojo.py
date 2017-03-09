@@ -493,6 +493,7 @@ class Dojo(object):
         """
         allocated = {}
         unallocated = {"office": [], "livingspace": []}
+
         for person in self.staff_list + self.fellow_list:
             if person.office:
                 if person.office.name.title() not in allocated:
@@ -506,7 +507,7 @@ class Dojo(object):
                         allocated[person.livingspace.name.title()] = []
                     allocated[person.livingspace.name.title()].append(person)
                 else:
-                    if person.wants_accommodation:
+                    if person.wants_accommodation == "True":
                         unallocated["livingspace"].append(person.ID.upper())
             except:
                 pass
