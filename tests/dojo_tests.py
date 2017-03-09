@@ -25,8 +25,8 @@ class TestCreateRoom(TestCase):
         """
         initial_room_count = len(self.ndojo.all_rooms)
         self.assertEqual(initial_room_count, 0)
-        blue_office = self.ndojo.create_room(["Blue"], "office")
-        self.assertTrue(blue_office)
+        self.ndojo.create_room(["Blue"], "office")
+        self.assertTrue(self.ndojo.all_rooms[0].name == "Blue")
         new_room_count = len(self.ndojo.all_rooms)
         self.assertEqual(new_room_count - initial_room_count, 1)
 
@@ -37,38 +37,11 @@ class TestCreateRoom(TestCase):
         """
         initial_room_count = len(self.ndojo.all_rooms)
         log = self.ndojo.create_room(["Blue", "Green", "Purple"], "office")
-        self.assertTrue(log)
         new_room_count = len(self.ndojo.all_rooms)
         self.assertEqual(new_room_count - initial_room_count, 3)
         self.ndojo.create_room(["Yellow", "Brown", "Black"], "livingspace")
         latest_room_count = len(self.ndojo.all_rooms)
         self.assertEqual(latest_room_count - new_room_count, 3)
-
-    def test_check_empty_input(self):
-        """ This function test for empty room name and room type inputs """
-        self.ndojo.create_room([], "  ")
-        log = sys.stdout.getvalue().strip()
-        self.assertEqual(
-            ansi_escape.sub("", log),
-            "Cannot create rooms with empty room name and/or empty room type")
-
-    def test_invalid_room_input(self):
-        """ This function test for empty room name"""
-        self.ndojo.create_room([" "], "office")
-        log = sys.stdout.getvalue().strip()
-        self.assertEqual(
-            ansi_escape.sub("", log),
-            "The office at index 0 cannot be created due to empty room name.")
-
-    def test_invalid_in_array_input(self):
-        """ This function test for empty room name in array rooms"""
-        self.ndojo.create_room(["Green", " ", "Black"], "livingspace")
-        log = sys.stdout.getvalue().strip()
-        log = log.split("\n")
-        self.assertEqual(
-            ansi_escape.sub("", log[len(log) - 1]),
-            "The livingspace at index 1 cannot be created"
-            " due to empty room name.")
 
     def test_invalid_room_type(self):
         """ This function test for invalid room type """

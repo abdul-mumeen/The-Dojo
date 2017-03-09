@@ -28,41 +28,30 @@ class Dojo(object):
         by receiving an array of room names an the room type.
         """
         log = ""
-        if room_type.strip() and len(room_name) > 0:
-            if room_type.lower() in ["office", "livingspace"]:
-                i = 0
-                for room in room_name:
-                    room = room.title()
-                    if room.strip() == "":
-                        log += empty_room_name_error.format(room_type, str(i))
-                    elif not room.isalpha() or room.lower() in \
-                            ["office", "livingspace"]:
-                        log += invalid_room_name_error.format(
-                                room_type, room.capitalize())
-                    elif self.check_room_name_exist(room):
-                        log += room_exist_error.format(room_type, room)
-                    else:
-                        self.add_room(room, room_type)
-                    i += 1
-            else:
-                log += invalid_room_type_error
+        if room_type.lower() in ["office", "livingspace"]:
+            for room in room_name:
+                room = room.title()
+                if not room.isalpha() or room in ["Office", "Livingspace"]:
+                    log += invalid_room_name_error.format(
+                            room_type, room.capitalize())
+                elif self.check_room_name_exist(room):
+                    log += room_exist_error.format(room_type, room)
+                else:
+                    self.add_room(room, room_type)
         else:
-            log += empty_room_type_and_name_error
-        if not log:
-            return True
-        else:
-            cprint(log, "red")
+            log = invalid_room_type_error
+
+        cprint(log, "red")
 
     def add_room(self, room_name, room_type):
         """ This function add the new room to the list of all rooms"""
         new_room = None
-        if room_type == "office":
+        if room_type.lower() == "office":
             new_room = Office(room_name)
             cprint(office_created.format(room_name), "green")
             self.all_rooms.append(new_room)
         else:
             new_room = LivingSpace(room_name)
-            room_name = room_name.title()
             cprint(livingspace_created.format(room_name), "green")
             self.all_rooms.append(new_room)
 
@@ -71,15 +60,15 @@ class Dojo(object):
         This function add a person by calling the add_fellow
         or add_staff function as the case may be.
         """
-        if wants_accommodation.lower() in ["yes", "y", "no", "n"]:
-            if designation.lower().strip() == "fellow":
+        wants_accommodation = wants_accommodation.lower()
+        if wants_accommodation in ["yes", "y", "no", "n"]:
+            if designation.lower() == "fellow":
                 return self.add_fellow(name, wants_accommodation)
             elif designation.lower().strip() == "staff":
-                if wants_accommodation.upper() == "Y":
+                if wants_accommodation in ["y", "yes"]:
                     cprint(livingspace_request_error, "red")
                 else:
-                    staff = self.add_staff(name)
-                    return staff
+                    return self.add_staff(name)
             else:
                 cprint(invalid_designation_error, "red")
         else:
@@ -90,10 +79,10 @@ class Dojo(object):
         This function create a fellow and add it to the list of fellow
         while calling the allocate function to allocate room.
         """
-        new_fellow = Fellow(name, "fellow")
+        new_fellow = Fellow(name)
         new_fellow.generate_id(self.fellow_list)
         new_fellow.office = self.allocate_room(new_fellow, Office)
-        if accommodation.upper() == "Y":
+        if accommodation in ("y", "yes"):
             new_fellow.livingspace = self.allocate_room(new_fellow,
                                                         LivingSpace)
             new_fellow.wants_accommodation = True
@@ -471,7 +460,7 @@ class Dojo(object):
         """
         allocated = {}
         unallocated = {"office": [], "livingspace": []}
-        for person in self.staff_list:
+        for person in (self.staff_list + self.fellow_list):
             office = person.office
             if office:
                 office_name = office.name.title()
