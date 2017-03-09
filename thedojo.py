@@ -7,6 +7,10 @@ from termcolor import cprint
 from pyfiglet import figlet_format
 
 from rooms.dojo import Dojo
+from utils.custom_messages import (
+    invalid_command, unexpected_error, welcome_message, missing_command,
+    state_overwrite_warning, invalid_wants_accomodation
+)
 
 
 def docopt_cmd(func):
@@ -19,12 +23,11 @@ def docopt_cmd(func):
         except DocoptExit as e:
             # The DocoptExit is thrown when the args do not match.
             # It prints a message to the user and the usage block.
-            cprint("Invalid Command: the value(s) are not entered " +
-                   "correctly!\nKindly check the usage bellow", "yellow")
+            cprint(invalid_command, "yellow")
             cprint(e, "cyan")
             return
         except:
-            cprint("The operation failed due to unexpected error!", "yellow")
+            cprint(unexpected_error, "yellow")
 
         return func(self, opt)
 
@@ -38,14 +41,13 @@ class TheDojo (cmd.Cmd):
     os.system("clear")
     cprint(figlet_format("The Dojo", font="starwars"),
            "yellow", attrs=["bold"])
-    intro = "\t\tWelcome to The Dojo Office Allocation Program!\n" \
-        + "\t\t\t(type help for a list of commands.)\n"
+    intro = welcome_message
     prompt = "The_Dojo >>> "
     doc_header = "List of commands that can be used in this app"
     dojo = Dojo()
 
     def default(self, line):
-        cprint("There is no command such as '%s'" % line, "yellow")
+        cprint(missing_command.format(line), "yellow")
 
     @docopt_cmd
     def do_print_room(self, arg):
@@ -84,8 +86,7 @@ class TheDojo (cmd.Cmd):
         accommodation = arg['<wants_accommodation>']
         if accommodation and accommodation.lower() not in \
                 ["y", "yes", "no", "n"]:
-            cprint("Invalid option for accommodation, availble options are;"
-                   " Y, N, Yes and No", "red")
+            cprint(invalid_wants_accomodation, "red")
             return
         accommodation = "Y" if accommodation and accommodation.lower() in \
             ["y", "yes"] else "N"
@@ -122,8 +123,7 @@ class TheDojo (cmd.Cmd):
     @docopt_cmd
     def do_load_state(self, arg):
         """Usage: load_state <sqlite_database>"""
-        cprint("Loading a state will overwrite the current state!\n" +
-               "Do you want to continue", "red")
+        cprint(state_overwrite_warning, "red")
         overwrite = input("(y/n): ")
         if overwrite.lower() == "y":
             self.dojo.load_state(arg['<sqlite_database>'])

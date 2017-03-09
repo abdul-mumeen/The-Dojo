@@ -258,12 +258,6 @@ class TestAddPersons(TestCase):
         self.assertEqual(ansi_escape.sub("", output),
                          "Staff cannot request for a livingspace!")
 
-    def test_add_person_empty_name_supplied(self):
-        self.dojo.add_person("  ", "staff")
-        output = sys.stdout.getvalue().strip()
-        self.assertEqual(ansi_escape.sub("", output),
-                         "Person cannot be created with an empty name!")
-
     def test_add_person_invalid_designation(self):
         self.dojo.add_person("Samora Dake", "type", "Y")
         output = sys.stdout.getvalue().strip()
@@ -277,12 +271,14 @@ class TestAddPersons(TestCase):
         output = sys.stdout.getvalue().strip()
         output = output.split("\n")
         self.assertEqual(ansi_escape.sub("", output[len(output) - 1]),
-                         "Invalid wants_accommodation parameter")
+                         "Invalid option for accommodation, "
+                         "availble options are; Y, N, Yes and No")
         new_fellow = self.dojo.add_person("Andy Carroll", "fellow", "lala")
         output = sys.stdout.getvalue().strip()
         output = output.split("\n")
         self.assertEqual(ansi_escape.sub("", output[len(output) - 1]),
-                         "Invalid wants_accommodation parameter")
+                         "Invalid option for accommodation, "
+                         "availble options are; Y, N, Yes and No")
 
 
 class TestReallocate(TestCase):
