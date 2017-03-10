@@ -114,9 +114,10 @@ class Dojo(object):
         """
         available_room = []
         for room in self.all_rooms:
-            room_available = room.total_space > \
-                            len(self.allocated[room.name]) \
-                            if room.name in self.allocated else True
+            room_available = (
+                room.total_space > len(self.allocated[room.name])
+                if room.name in self.allocated else True
+            )
 
             if room_available and isinstance(room, room_type):
                 available_room.append(room)
@@ -169,8 +170,7 @@ class Dojo(object):
             for person in self.allocated[room]:
                 names.append(person.name)
             names = ", ".join(names)
-            print_out += room + "\n" + ("-" * len(names)) + \
-                "\n" + names + "\n\n"
+            print_out += "\n".join([room, ("-" * len(names)), names, "\n"])
         if not print_out:
             cprint(empty_allocation_list, "yellow")
         else:
@@ -267,6 +267,7 @@ class Dojo(object):
 
     def reallocate_person(self, person_id, new_room_name):
         """ This function reallocates a person to a given room. """
+        person_id = person_id.upper()
         if self.check_valid_id(person_id):
             id_index = self.get_person_list_index(person_id)
             if id_index > -1:
@@ -290,63 +291,41 @@ class Dojo(object):
 
     def move_person(self, person_id, index, new_room_name):
         """ This function move a person to the new room"""
+        list_mapping = {"Staff": self.staff_list, "Fellow": self.fellow_list}
+        person = "Staff" if person_id.startswith("S") else "Fellow"
 
         room = [room for room in self.all_rooms if room.name ==
                 new_room_name][0]
         if isinstance(room, LivingSpace) and person_id.startswith("S"):
             cprint(staff_livingspace_error, "red")
-        elif isinstance(room, LivingSpace):
-            if self.fellow_list[index].wants_accommodation:
-                if self.fellow_list[index].livingspace:
-                    if self.fellow_list[index].livingspace.name.lower() != \
-                            new_room_name.lower():
-                        self.remove_from_allocated(person_id, LivingSpace)
-                    else:
-                        cprint(same_livingspace_error, "yellow")
-                        return
-                self.fellow_list[index].livingspace = room
-                self.add_room_to_allocated(new_room_name)
-                if self.fellow_list[index].ID in \
-                        self.unallocated["livingspace"]:
-                    self.unallocated["livingspace"]\
-                        .remove(self.fellow_list[index].ID)
-                self.allocated[new_room_name].append(self.fellow_list[index])
-                cprint(fellow_reallocate_livingspace + new_room_name, "green")
-            else:
-                cprint(livingspace_not_request, "red")
         else:
-            if person_id.upper()[0] == "S":
-                if self.staff_list[index].office:
-                    if self.staff_list[index].office.name.lower() != \
-                            new_room_name.lower():
-                        self.remove_from_allocated(person_id, Office)
-                    else:
-                        cprint(same_office_error.format("Staff"), "yellow")
-                        return
-                self.staff_list[index].office = room
-                self.add_room_to_allocated(new_room_name)
-                if self.staff_list[index].ID in self.unallocated["office"]:
-                    self.unallocated["office"]\
-                        .remove(self.staff_list[index].ID)
-                self.allocated[new_room_name].append(self.staff_list[index])
-                cprint(office_reallocate_success.format("Staff") +
-                       new_room_name, "green")
+            room_type_attr_mapping = {True: "livingspace", False: "office"}
+            room_instance_mapping = {"office": Office, "livingspace": LivingSpace}
+            room_type = ""
+            if isinstance(room, LivingSpace):
+                if list_mapping[person][index].wants_accommodation:
+                    room_type = room_type_attr_mapping[True]
+                else:
+                    cprint(livingspace_not_request, "red")
+                    return
             else:
-                if self.fellow_list[index].office:
-                    if self.fellow_list[index].office.name.lower() != \
-                            new_room_name.lower():
-                        self.remove_from_allocated(person_id, Office)
-                    else:
-                        cprint(same_office_error.format("Fellow"), "yellow")
-                        return
-                self.fellow_list[index].office = room
-                self.add_room_to_allocated(new_room_name)
-                if self.fellow_list[index].ID in self.unallocated["office"]:
-                    self.unallocated["office"]\
-                        .remove(self.fellow_list[index].ID)
-                self.allocated[new_room_name].append(self.fellow_list[index])
-                cprint(office_reallocate_success.format("Fellow") +
-                       new_room_name, "green")
+                room_type = room_type_attr_mapping[False]
+
+            if getattr(list_mapping[person][index], room_type):
+                current_room = getattr(list_mapping[person][index], room_type)
+                if current_room.name != new_room_name:
+                    self.remove_from_allocated(person_id, room_instance_mapping[room_type])
+                else:
+                    cprint(same_room_error.format(person, room_type), "yellow")
+                    return
+            setattr(list_mapping[person][index], room_type, room)
+            self.add_room_to_allocated(new_room_name)
+            if list_mapping[person][index].ID in self.unallocated[room_type]:
+                self.unallocated[room_type]\
+                    .remove(list_mapping[person][index].ID)
+            self.allocated[new_room_name].append(list_mapping[person][index])
+            cprint(room_reallocate_success.format(person, room_type) +
+                   new_room_name, "green")
 
     def add_room_to_allocated(self, room_name):
         """ this function add a new room to the room allocated list """
