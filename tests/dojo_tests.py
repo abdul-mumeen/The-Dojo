@@ -36,7 +36,7 @@ class TestCreateRoom(TestCase):
         creation of multiple rooms of a type
         """
         initial_room_count = len(self.ndojo.all_rooms)
-        log = self.ndojo.create_room(["Blue", "Green", "Purple"], "office")
+        self.ndojo.create_room(["Blue", "Green", "Purple"], "office")
         new_room_count = len(self.ndojo.all_rooms)
         self.assertEqual(new_room_count - initial_room_count, 3)
         self.ndojo.create_room(["Yellow", "Brown", "Black"], "livingspace")
@@ -64,7 +64,7 @@ class TestCreateRoom(TestCase):
     def test_duplicate_livingspace_name(self):
         """ This function test for creation of duplicate livingspace names """
         self.ndojo.create_room(
-                    ["Brown", "Black", "Black"], "livingspace")
+            ["Brown", "Black", "Black"], "livingspace")
         log = sys.stdout.getvalue().strip()
         log = log.split("\n")
         self.assertEqual(
@@ -74,7 +74,7 @@ class TestCreateRoom(TestCase):
     def test_alphanumeric_room_name(self):
         """ This function test for invalid alphanumeric livingspace name """
         self.ndojo.create_room(
-                    ["Brown", "Bl9ck", "Black"], "livingspace")
+            ["Brown", "Bl9ck", "Black"], "livingspace")
         log = sys.stdout.getvalue().strip()
         log = log.split("\n")
         self.assertEqual(
@@ -141,7 +141,7 @@ class TestPrintFunctions(TestCase):
         output = output.split("\n")
         self.assertEqual(ansi_escape.sub("", output[len(output) - 2]),
                          "{}\t\tHASSAN EL-SAHEED\t\t-\t\t-".format(
-                            new_fellow.ID))
+                         new_fellow.ID))
 
     def test_print_allocation_to_file(self):
         """ This function test the printing of allocated persons to file"""
@@ -168,7 +168,7 @@ class TestPrintFunctions(TestCase):
         self.ndojo.print_unallocated()
         output = sys.stdout.getvalue().strip()
         output = ansi_escape.sub("", output)
-        self.assertEqual(output[len(output)-23:-1],
+        self.assertEqual(output[len(output) - 23:-1],
                          "MIKE TYSON - NO OFFICE")
 
     def test_print_unallocated_to_file(self):
@@ -240,13 +240,13 @@ class TestAddPersons(TestCase):
 
     def test_invalid_wants_accomodation(self):
         """ This function test for invalid wants_accommodation parameter """
-        new_staff = self.dojo.add_person("Andy Carroll", "staff", "yo")
+        self.dojo.add_person("Andy Carroll", "staff", "yo")
         output = sys.stdout.getvalue().strip()
         output = output.split("\n")
         self.assertEqual(ansi_escape.sub("", output[len(output) - 1]),
                          "Invalid option for accommodation, "
                          "availble options are; Y, N, Yes and No")
-        new_fellow = self.dojo.add_person("Andy Carroll", "fellow", "lala")
+        self.dojo.add_person("Andy Carroll", "fellow", "lala")
         output = sys.stdout.getvalue().strip()
         output = output.split("\n")
         self.assertEqual(ansi_escape.sub("", output[len(output) - 1]),
@@ -488,8 +488,8 @@ class TestLoadPeople(TestCase):
         output = sys.stdout.getvalue().strip()
         output = output.split("\n")
         self.assertEqual(
-                ansi_escape.sub("", output[len(output) - 1]),
-                "Everyone on the list have been successfully loaded")
+            ansi_escape.sub("", output[len(output) - 1]),
+            "Everyone on the list have been successfully loaded")
         self.assertEqual(len(self.dojo.staff_list), 3)
         self.assertEqual(len(self.dojo.fellow_list), 4)
 

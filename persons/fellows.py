@@ -19,7 +19,7 @@ class Fellow(Person):
         if self.livingspace:
             cprint("{} has been allocated ".format(first_name) +
                    "the livingspace {}".format(
-                            self.livingspace.name.title()), "green")
+                   self.livingspace.name.title()), "green")
         else:
             if self.wants_accommodation:
                 cprint("{} has been placed".format(first_name) +
