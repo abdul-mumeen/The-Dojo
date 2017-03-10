@@ -15,14 +15,6 @@ class Person(object):
         self.designation = designation
         self.existing_ids = []
 
-    # @property
-    # def existing_ids(self):
-    #     return self.existing_ids
-    #
-    # @existing_ids.setter:
-    # def register_id(self, id):
-    #     self.existing_ids.append(id)
-
     def get_existing_id(self, person_list):
         """This function extracts a list of existing id from person list"""
         return [person.ID for person in person_list]
@@ -44,13 +36,11 @@ class Person(object):
     def print_me(self):
         first_name = self.name.split()[0].title()
         cprint("{} {} has been successfully added with ID {}.".format(
-                                    self.designation.title(),
-                                    self.name.title(), self.ID.upper()),
-               "green")
+            self.designation.title(), self.name.title(), self.ID.upper()),
+            "green")
         if self.office:
             cprint("{} has been allocated the office {}".format(
-                            first_name, self.office.name.title()),
-                   "green")
+                first_name, self.office.name.title()), "green")
         else:
             cprint("{} has been placed".format(first_name) +
                    " on a waiting list for office", "yellow")

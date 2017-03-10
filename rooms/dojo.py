@@ -33,7 +33,7 @@ class Dojo(object):
                 room = room.title()
                 if not room.isalpha() or room in ["Office", "Livingspace"]:
                     log += invalid_room_name_error.format(
-                            room_type, room.capitalize())
+                        room_type, room.capitalize())
                 elif self.check_room_name_exist(room):
                     log += room_exist_error.format(room_type, room)
                 else:
@@ -216,7 +216,8 @@ class Dojo(object):
                 cprint(file_operation_menu, "yellow")
                 while option.lower() not in ["a", "w", "c"]:
                     option = input("a, w or c: ")
-                self.execute_write_to_file(print_out, file_name, option.lower())
+                self.execute_write_to_file(
+                    print_out, file_name, option.lower())
             else:
                 self.execute_write_to_file(print_out, file_name, "w")
         else:
@@ -251,7 +252,7 @@ class Dojo(object):
             len(input_val) != 7 else True
         return output
 
-    def get_person_list_index(self, person_id):
+    def get_person(self, person_id):
         """ This function gets the index of the person_id on
             the staff list or fellow list
         """
@@ -261,25 +262,24 @@ class Dojo(object):
         )
         for index, person in enumerate(person_list):
             if person_id == person.ID:
-                return index
+                return person
         else:
-            return -1
+            return None
 
     def reallocate_person(self, person_id, new_room_name):
         """ This function reallocates a person to a given room. """
         person_id = person_id.upper()
         if self.check_valid_id(person_id):
-            id_index = self.get_person_list_index(person_id)
-            if id_index > -1:
+            person = self.get_person(person_id)
+            if person:
                 new_room_name = new_room_name.title()
                 if new_room_name in [room.name for room in self.all_rooms]:
                     room = [room for room in self.all_rooms if room.name ==
                             new_room_name][0]
-                    if new_room_name not in self.allocated:
-                        self.move_person(person_id, id_index, new_room_name)
-                    elif room.total_space > \
+                    if new_room_name not in self.allocated or \
+                            room.total_space > \
                             len(self.allocated[new_room_name]):
-                        self.move_person(person_id, id_index, new_room_name)
+                        self.move_person(person, new_room_name)
                     else:
                         cprint(room_full_error, "yellow")
                 else:
@@ -289,21 +289,22 @@ class Dojo(object):
         else:
             cprint(invalid_id, "red")
 
-    def move_person(self, person_id, index, new_room_name):
+    def move_person(self, person_obj, new_room_name):
         """ This function move a person to the new room"""
-        list_mapping = {"Staff": self.staff_list, "Fellow": self.fellow_list}
+        person_id = person_obj.ID
         person = "Staff" if person_id.startswith("S") else "Fellow"
-
         room = [room for room in self.all_rooms if room.name ==
                 new_room_name][0]
         if isinstance(room, LivingSpace) and person_id.startswith("S"):
             cprint(staff_livingspace_error, "red")
         else:
             room_type_attr_mapping = {True: "livingspace", False: "office"}
-            room_instance_mapping = {"office": Office, "livingspace": LivingSpace}
+            room_instance_mapping = {
+                "office": Office, "livingspace": LivingSpace
+            }
             room_type = ""
             if isinstance(room, LivingSpace):
-                if list_mapping[person][index].wants_accommodation:
+                if person_obj.wants_accommodation:
                     room_type = room_type_attr_mapping[True]
                 else:
                     cprint(livingspace_not_request, "red")
@@ -311,19 +312,19 @@ class Dojo(object):
             else:
                 room_type = room_type_attr_mapping[False]
 
-            if getattr(list_mapping[person][index], room_type):
-                current_room = getattr(list_mapping[person][index], room_type)
+            if getattr(person_obj, room_type):
+                current_room = getattr(person_obj, room_type)
                 if current_room.name != new_room_name:
-                    self.remove_from_allocated(person_id, room_instance_mapping[room_type])
+                    self.remove_from_allocated(
+                        person_id, room_instance_mapping[room_type])
                 else:
                     cprint(same_room_error.format(person, room_type), "yellow")
                     return
-            setattr(list_mapping[person][index], room_type, room)
+            setattr(person_obj, room_type, room)
             self.add_room_to_allocated(new_room_name)
-            if list_mapping[person][index].ID in self.unallocated[room_type]:
-                self.unallocated[room_type]\
-                    .remove(list_mapping[person][index].ID)
-            self.allocated[new_room_name].append(list_mapping[person][index])
+            if person_id in self.unallocated[room_type]:
+                self.unallocated[room_type].remove(person_id)
+            self.allocated[new_room_name].append(person_obj)
             cprint(room_reallocate_success.format(person, room_type) +
                    new_room_name, "green")
 
@@ -362,45 +363,47 @@ class Dojo(object):
         else:
             cprint(empty_person_list, "yellow")
 
-    def load_people(self, file_name):
-        response_mapping = ["Everyone", "Some people", "Nobody"]
+    def get_file_content(self, file_name):
         if os.path.isfile("data/{}.txt".format(file_name)):
             file = open("data/{}.txt".format(file_name), "r")
             content = file.read()
             file.close()
             if content.strip():
                 content = content.split("\n")
-                line = 1
-                error = 0
-                for person_detail in content:
-                    if person_detail.strip():
-                        person_detail = person_detail.strip().split()
-                        name = person_detail[0] + " " + person_detail[1]
-                        if len(person_detail) == 3:
-                            person = self.add_person(name, person_detail[2])
-                            if not person:
-                                cprint(line_not_loaded_error.format(line),
-                                       "red")
-                                error += 1
-                        elif len(person_detail) == 4:
-                            person = self.add_person(name, person_detail[2],
-                                                     person_detail[3])
-                            if not person:
-                                cprint(line_not_loaded_error.format(line),
-                                       "red")
-                                error += 1
-                        else:
-                            cprint(line_parameter_error.format(line), "red")
-                            error += 1
-                    line += 1
-                if error:
-                    error = 2 if error >= line - 1 else 1
-                load_ran = response_mapping[error]
-                cprint(people_loaded_info.format(load_ran), "green")
+                return content
             else:
                 cprint(empty_file_error, "yellow")
         else:
             cprint("File not found", "yellow")
+
+    def load_people(self, file_name):
+        content = self.get_file_content(file_name)
+        error = 0
+        if not content:
+            return
+        for index, person_detail in enumerate(content):
+            if person_detail.strip():
+                person_detail = person_detail.strip().split()
+                name = person_detail[0] + " " + person_detail[1]
+                if len(person_detail) in [3, 4]:
+                    person_detail.append("N")\
+                        if len(person_detail) == 3 else person_detail
+                    person = self.add_person(name, person_detail[2],
+                                             person_detail[3])
+                    if not person:
+                        cprint(line_not_loaded_error.format(index + 1), "red")
+                        error += 1
+                else:
+                    cprint(line_parameter_error.format(index + 1), "red")
+                    error += 1
+        self.print_load_people_message(error, content)
+
+    def print_load_people_message(self, error, content):
+        response_mapping = ["Everyone", "Some people", "Nobody"]
+        if error:
+            error = 2 if error >= len(content) - 1 else 1
+        load_ran = response_mapping[error]
+        cprint(people_loaded_info.format(load_ran), "green")
 
     def save_state(self, db_name):
         """

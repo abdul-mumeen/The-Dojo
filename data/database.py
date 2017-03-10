@@ -20,8 +20,8 @@ class DB(object):
         if not db_name.strip():
             db_name = self.generate_name()
         if self.db_exists(db_name):
-            return "Database name already existed!" + \
-                                    " Kindly choose another name."
+            return ("Database name already existed!"
+                    " Kindly choose another name.")
         else:
             sqlite_file = "data/{}.sqlite".format(db_name)
             conn = sqlite3.connect(sqlite_file)
@@ -42,9 +42,10 @@ class DB(object):
         for room in rooms:
             try:
                 room_type = self.room_type_mapping[type(room)]
-                c.execute("INSERT INTO room_table (name, type, capacity) \
-                          VALUES ('{}', '{}', '{}')".format(
-                                room.name, room_type, room.total_space))
+                c.execute(
+                    "INSERT INTO room_table (name, type, capacity) "
+                    "VALUES ('{}', '{}', '{}')".format(
+                        room.name, room_type, room.total_space))
             except:
                 print('ERROR: failed to insert room {}'.format(room.name))
 
@@ -60,13 +61,13 @@ class DB(object):
                 "office) VALUES ('{}', '{}', '{}', '{}')".format(
                     person.ID, person.name, person.designation, office))
             if person.designation.lower() == "fellow":
-                livingSpace = person.livingspace.name if \
-                                person.livingspace else ""
-                c.execute("INSERT INTO livingspace_table (ids, \
-                        wants_accommodation, livingspace) VALUES \
-                            ('{}', '{}', '{}')".format(
-                            person.ID,
-                            person.wants_accommodation, livingSpace))
+                livingSpace = person.livingspace.name \
+                    if person.livingspace else ""
+                c.execute(
+                    "INSERT INTO livingspace_table (ids,"
+                    "wants_accommodation, livingspace) VALUES"
+                    "('{}', '{}', '{}')".format(
+                        person.ID, person.wants_accommodation, livingSpace))
 
     def db_exists(self, db_name):
         """This function check if a database file exist"""
