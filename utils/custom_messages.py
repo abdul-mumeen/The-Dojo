@@ -49,8 +49,8 @@ livingspace_not_request = "Fellow does not want a livingspace"
 fellow_reallocate_livingspace = (
     "Fellow has been successfully reallocated to livingspace "
 )
-same_office_error = "{} is currently assigned to this office"
-office_reallocate_success = "{} has been successfully reallocated to office "
+same_room_error = "{} is currently assigned to this {}"
+room_reallocate_success = "{} has been successfully reallocated to {} "
 empty_person_list = "This list is empty, no one has been added yet"
 line_not_loaded_error = "line {} was not loaded because of the above^^ reason"
 line_parameter_error = (
