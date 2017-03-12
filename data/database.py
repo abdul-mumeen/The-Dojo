@@ -66,7 +66,7 @@ class DB(object):
                 c.execute(
                     "INSERT INTO livingspace_table (ids,"
                     "wants_accommodation, livingspace) VALUES"
-                    "('{}', '{}', '{}')".format(
+                    "('{}', {}, '{}')".format(
                         person.ID, person.wants_accommodation, livingSpace))
 
     def db_exists(self, db_name):
@@ -95,7 +95,7 @@ class DB(object):
                             name TEXT, designation TEXT, office TEXT)")
 
         c.execute("CREATE TABLE livingspace_table (ids TEXT PRIMARY KEY,\
-                            wants_accommodation TEXT, livingspace TEXT)")
+                            wants_accommodation INTEGER, livingspace TEXT)")
 
     def load_state(self, db_name):
         """

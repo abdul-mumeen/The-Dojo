@@ -93,7 +93,7 @@ class TheDojo (cmd.Cmd):
         new_person = self.dojo.add_person(fname + " " + lname,
                                           designation, accommodation)
         if new_person:
-            new_person.print_me()
+            new_person.print_creation_info()
 
     @docopt_cmd
     def do_reallocate_person(self, arg):
