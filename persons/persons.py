@@ -29,11 +29,11 @@ class Person(object):
                 random.choice(string.ascii_uppercase + string.digits)
                 for _ in range(5)
             )
-            if not (person_id in self.get_existing_id(person_list)):
+            if person_id not in self.get_existing_id(person_list):
                 id_exist = False
-            self.ID = person_id
+                self.ID = person_id
 
-    def print_me(self):
+    def print_creation_info(self):
         first_name = self.name.split()[0].title()
         cprint("{} {} has been successfully added with ID {}.".format(
             self.designation.title(), self.name.title(), self.ID.upper()),

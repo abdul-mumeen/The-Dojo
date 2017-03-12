@@ -85,7 +85,7 @@ class Dojo(object):
         if accommodation in ("y", "yes"):
             new_fellow.livingspace = self.allocate_room(new_fellow,
                                                         LivingSpace)
-            new_fellow.wants_accommodation = True
+            new_fellow.wants_accommodation = 1
         self.fellow_list.append(new_fellow)
         return new_fellow
 
@@ -459,6 +459,6 @@ class Dojo(object):
                         allocated[livingspace_name] = []
                     allocated[livingspace_name].append(person)
                 else:
-                    if person.wants_accommodation == "True":
+                    if person.wants_accommodation:
                         unallocated["livingspace"].append(person.ID.upper())
         return {"allocated": allocated, "unallocated": unallocated}

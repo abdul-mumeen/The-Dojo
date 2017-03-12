@@ -10,12 +10,12 @@ class Fellow(Person):
 
     def __init__(self, name):
         super().__init__(name, "fellow")
-        self.wants_accommodation = False
+        self.wants_accommodation = 0
         self.livingspace = None
 
-    def print_me(self):
+    def print_creation_info(self):
         first_name = self.name.split()[0].title()
-        super().print_me()
+        super().print_creation_info()
         if self.livingspace:
             cprint("{} has been allocated ".format(first_name) +
                    "the livingspace {}".format(

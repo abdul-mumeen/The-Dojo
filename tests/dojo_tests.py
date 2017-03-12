@@ -194,7 +194,7 @@ class TestAddPersons(TestCase):
         self.assertIsInstance(new_staff, Staff)
         self.assertEqual(new_staff.name, "Andy Carroll")
         self.assertIsInstance(new_staff, Person)
-        new_staff.print_me()
+        new_staff.print_creation_info()
         output = sys.stdout.getvalue().strip()
         output = output.split("\n")
         self.assertEqual(ansi_escape.sub("", output[len(output) - 1]),
@@ -215,7 +215,7 @@ class TestAddPersons(TestCase):
         """
         self.dojo.create_room(["Idanre"], "office")
         new_fellow = self.dojo.add_person("Katwe Queen", "fellow", "Y")
-        new_fellow.print_me()
+        new_fellow.print_creation_info()
         output = sys.stdout.getvalue().strip()
         output = output.split("\n")
         self.assertEqual(ansi_escape.sub("", output[len(output) - 2]),
