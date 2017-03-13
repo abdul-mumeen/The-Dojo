@@ -1,11 +1,11 @@
+from datetime import datetime
 import os
-import datetime
 import sqlite3
 
-from persons.staffs import Staff
 from persons.fellows import Fellow
-from rooms.office import Office
+from persons.staffs import Staff
 from rooms.livingspace import LivingSpace
+from rooms.office import Office
 
 
 class DB(object):
@@ -17,8 +17,7 @@ class DB(object):
         such as room collection, staff list and fellow list currently available
         in the application
         """
-        if not db_name.strip():
-            db_name = self.generate_name()
+        db_name = db_name.strip() or self.generate_name()
         if self.db_exists(db_name):
             return ("Database name already existed!"
                     " Kindly choose another name.")
@@ -59,7 +58,7 @@ class DB(object):
             c.execute(
                 "INSERT INTO person_table (id, name, designation, " +
                 "office) VALUES ('{}', '{}', '{}', '{}')".format(
-                    person.ID, person.name, person.designation, office))
+                    person.id, person.name, person.designation, office))
             if person.designation.lower() == "fellow":
                 livingSpace = person.livingspace.name \
                     if person.livingspace else ""
@@ -67,7 +66,7 @@ class DB(object):
                     "INSERT INTO livingspace_table (ids,"
                     "wants_accommodation, livingspace) VALUES"
                     "('{}', {}, '{}')".format(
-                        person.ID, person.wants_accommodation, livingSpace))
+                        person.id, person.wants_accommodation, livingSpace))
 
     def db_exists(self, db_name):
         """This function check if a database file exist"""
@@ -78,7 +77,7 @@ class DB(object):
         This function generates a database name from concatenating
         the year, month, day, hour, minute and second of the moment
         """
-        date_time = datetime.datetime.now()
+        date_time = datetime.now()
         db_name = "".join([str(date_time.year), str(date_time.month),
                            str(date_time.day), str(date_time.hour),
                            str(date_time.minute), str(date_time.second)])
@@ -149,7 +148,7 @@ class DB(object):
         fellow_list = []
         for row in db_fellow_list:
             new_fellow = Fellow(row[1])
-            new_fellow.ID = row[0]
+            new_fellow.id = row[0]
             new_fellow.office = [
                 room for room in rooms
                 if room.name.title() == row[3].title()][0] if row[3] and \
@@ -169,8 +168,8 @@ class DB(object):
         """
         staff_list = []
         for row in db_staff_list:
-            new_staff = Staff(row[1], row[2])
-            new_staff.ID = row[0]
+            new_staff = Staff(row[1])
+            new_staff.id = row[0]
             new_staff.office = [
                 room for room in rooms
                 if room.name.title() == row[3].title()][0] if row[3] and \

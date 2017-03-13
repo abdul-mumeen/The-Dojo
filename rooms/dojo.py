@@ -94,7 +94,7 @@ class Dojo(object):
         This function create a staff and add it to the list of staff
         while calling the allocate function to allocate room.
         """
-        new_staff = Staff(name, "staff")
+        new_staff = Staff(name)
         new_staff.generate_id(self.staff_list)
         new_staff.office = self.allocate_room(new_staff, Office)
         self.staff_list.append(new_staff)
@@ -137,7 +137,7 @@ class Dojo(object):
             self.allocated[room.name].append(person)
             return room
         else:
-            self.unallocated[rooms_mapping[room_type]].append(person.ID)
+            self.unallocated[rooms_mapping[room_type]].append(person.id)
 
     def print_room(self, room_name):
         """"
@@ -197,7 +197,7 @@ class Dojo(object):
             for id in self.unallocated[key]:
                 person = [person for person in
                           (self.staff_list + self.fellow_list)
-                          if person.ID.upper() == id.upper()][0]
+                          if person.id.upper() == id.upper()][0]
                 print_out += person.name.upper() + " - NO " + \
                     key.upper() + "\n"
         if not print_out:
@@ -261,7 +261,7 @@ class Dojo(object):
             self.fellow_list if person_id.startswith('F') else self.staff_list
         )
         for index, person in enumerate(person_list):
-            if person_id == person.ID:
+            if person_id == person.id:
                 return person
         else:
             return None
@@ -291,7 +291,7 @@ class Dojo(object):
 
     def move_person(self, person_obj, new_room_name):
         """ This function move a person to the new room"""
-        person_id = person_obj.ID
+        person_id = person_obj.id
         person = "Staff" if person_id.startswith("S") else "Fellow"
         room = [room for room in self.all_rooms if room.name ==
                 new_room_name][0]
@@ -336,7 +336,7 @@ class Dojo(object):
     def remove_from_allocated(self, person_id, room_type):
         """ This function remove a person from previously allocated room"""
         person = next((person for person in self.staff_list + self.fellow_list
-                       if person.ID.upper() == person_id.upper()), None)
+                       if person.id.upper() == person_id.upper()), None)
         if person:
             key = person.office.name.title() if room_type == Office else \
                 person.livingspace.name.title()
@@ -349,14 +349,14 @@ class Dojo(object):
                           "fellow": [self.fellow_list, "Fellow List\n"]}
         person_list, list_header = person_mapping[staff_or_fellow]
 
-        list_header += "ID\t\tNAME\t\tOFFICE NAME\tLIVINGSPACE\n"
+        list_header += "id\t\tNAME\t\tOFFICE NAME\tLIVINGSPACE\n"
         print_out = list_header + ("-" * 70) + "\n"
         for person in person_list:
             office_name = person.office.name if person.office else "-"
             livingspace_name = person.livingspace.name \
                 if staff_or_fellow == "fellow" and person.livingspace else "-"
             print_out += "{}\t\t{}\t\t{}\t\t{}\n".format(
-                person.ID, person.name.upper(), office_name.upper(),
+                person.id, person.name.upper(), office_name.upper(),
                 livingspace_name.upper())
         if len(print_out) > 125:
             cprint(print_out, "green")
@@ -450,7 +450,7 @@ class Dojo(object):
                     allocated[office_name] = []
                 allocated[office_name].append(person)
             else:
-                unallocated["office"].append(person.ID)
+                unallocated["office"].append(person.id)
             if hasattr(person, "livingspace"):
                 livingspace = person.livingspace
                 if livingspace:
@@ -460,5 +460,5 @@ class Dojo(object):
                     allocated[livingspace_name].append(person)
                 else:
                     if person.wants_accommodation:
-                        unallocated["livingspace"].append(person.ID.upper())
+                        unallocated["livingspace"].append(person.id.upper())
         return {"allocated": allocated, "unallocated": unallocated}
