@@ -141,7 +141,7 @@ class TestPrintFunctions(TestCase):
         output = output.split("\n")
         self.assertEqual(ansi_escape.sub("", output[len(output) - 2]),
                          "{}\t\tHASSAN EL-SAHEED\t\t-\t\t-".format(
-                         new_fellow.ID))
+                         new_fellow.id))
 
     def test_print_allocation_to_file(self):
         """ This function test the printing of allocated persons to file"""
@@ -213,7 +213,7 @@ class TestAddPersons(TestCase):
         This function test for successful adding and
         allocation of fellow
         """
-        self.dojo.create_room(["Idanre"], "office")
+        self.dojo.create_room(["idanre"], "office")
         new_fellow = self.dojo.add_person("Katwe Queen", "fellow", "Y")
         new_fellow.print_creation_info()
         output = sys.stdout.getvalue().strip()
@@ -282,7 +282,7 @@ class TestReallocate(TestCase):
     def test_rellocate_fellow_to_same_office(self):
         self.dojo.create_room(["Blue"], "office")
         new_fellow = self.dojo.add_person("Jeremy Johnson", "fellow")
-        self.dojo.reallocate_person(new_fellow.ID, "Blue")
+        self.dojo.reallocate_person(new_fellow.id, "Blue")
         output = sys.stdout.getvalue().strip()
         output = output.split("\n")
         self.assertEqual(ansi_escape.sub("", output[len(output) - 1]),
@@ -291,7 +291,7 @@ class TestReallocate(TestCase):
     def test_rellocate_staff_to_same_office(self):
         self.dojo.create_room(["Blue"], "office")
         new_fellow = self.dojo.add_person("Jeremy Johnson", "staff")
-        self.dojo.reallocate_person(new_fellow.ID, "Blue")
+        self.dojo.reallocate_person(new_fellow.id, "Blue")
         output = sys.stdout.getvalue().strip()
         output = output.split("\n")
         self.assertEqual(ansi_escape.sub("", output[len(output) - 1]),
@@ -300,7 +300,7 @@ class TestReallocate(TestCase):
     def test_rellocate_to_same_livingspace(self):
         self.dojo.create_room(["Blue"], "livingspace")
         new_fellow = self.dojo.add_person("Jeremy Johnson", "fellow", "Y")
-        self.dojo.reallocate_person(new_fellow.ID, "Blue")
+        self.dojo.reallocate_person(new_fellow.id, "Blue")
         output = sys.stdout.getvalue().strip()
         output = output.split("\n")
         self.assertEqual(ansi_escape.sub("", output[len(output) - 1]),
@@ -324,7 +324,7 @@ class TestReallocate(TestCase):
         """ This function test if the room supplied exist"""
         self.dojo.create_room(["Blue"], "office")
         new_fellow = self.dojo.add_person("Jeremy Johnson", "fellow", "Y")
-        self.dojo.reallocate_person(new_fellow.ID, "Green")
+        self.dojo.reallocate_person(new_fellow.id, "Green")
         output = sys.stdout.getvalue().strip()
         output = output.split("\n")
         self.assertEqual(
@@ -335,7 +335,7 @@ class TestReallocate(TestCase):
         self.dojo.create_room(["Blue"], "office")
         new_fellow = self.dojo.add_person("Jeremy Johnson", "staff")
         self.dojo.create_room(["Green"], "livingspace")
-        self.dojo.reallocate_person(new_fellow.ID, "Green")
+        self.dojo.reallocate_person(new_fellow.id, "Green")
         output = sys.stdout.getvalue().strip()
         output = output.split("\n")
         self.assertEqual(ansi_escape.sub("", output[len(output) - 1]),
@@ -346,7 +346,7 @@ class TestReallocate(TestCase):
         self.dojo.create_room(["Green"], "office")
         new_fellow = self.dojo.add_person("Jeremy Johnson", "fellow", "N")
         self.dojo.create_room(["Brown"], "office")
-        self.dojo.reallocate_person(new_fellow.ID, "Brown")
+        self.dojo.reallocate_person(new_fellow.id, "Brown")
         output = sys.stdout.getvalue().strip()
         output = output.split("\n")
         self.assertEqual(
@@ -358,7 +358,7 @@ class TestReallocate(TestCase):
         self.dojo.create_room(["Green"], "office")
         new_fellow = self.dojo.add_person("Jeremy Johnson", "staff")
         self.dojo.create_room(["Brown"], "office")
-        self.dojo.reallocate_person(new_fellow.ID, "Brown")
+        self.dojo.reallocate_person(new_fellow.id, "Brown")
         output = sys.stdout.getvalue().strip()
         output = output.split("\n")
         self.assertEqual(
@@ -370,7 +370,7 @@ class TestReallocate(TestCase):
         self.dojo.create_room(["Green"], "livingspace")
         new_fellow = self.dojo.add_person("Jeremy Johnson", "fellow", "Y")
         self.dojo.create_room(["Brown"], "livingspace")
-        self.dojo.reallocate_person(new_fellow.ID, "Brown")
+        self.dojo.reallocate_person(new_fellow.id, "Brown")
         output = sys.stdout.getvalue().strip()
         output = output.split("\n")
         self.assertEqual(ansi_escape.sub("", output[len(output) - 1]),
@@ -381,7 +381,7 @@ class TestReallocate(TestCase):
         """ This function test if room rellocating to is of the same type"""
         self.dojo.create_room(["Green"], "livingspace")
         new_fellow = self.dojo.add_person("Jeremy Johnson", "fellow", "N")
-        self.dojo.reallocate_person(new_fellow.ID, "Green")
+        self.dojo.reallocate_person(new_fellow.id, "Green")
         output = sys.stdout.getvalue().strip()
         output = output.split("\n")
         self.assertEqual(
@@ -397,7 +397,7 @@ class TestReallocate(TestCase):
         new_fellow = self.dojo.add_person("Jeremy Crowell", "fellow", "Y")
         self.dojo.create_room(["Blue"], "livingspace")
         new_fellow = self.dojo.add_person("Jeremy Python", "fellow", "Y")
-        self.dojo.reallocate_person(new_fellow.ID, "Green")
+        self.dojo.reallocate_person(new_fellow.id, "Green")
         output = sys.stdout.getvalue().strip()
         output = output.split("\n")
         self.assertEqual(

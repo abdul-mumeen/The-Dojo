@@ -10,33 +10,27 @@ class Person(object):
 
     def __init__(self, name, designation):
         self.name = name
-        self.ID = None
+        self.id = None
         self.office = None
         self.designation = designation
-        self.existing_ids = []
 
     def get_existing_id(self, person_list):
         """This function extracts a list of existing id from person list"""
-        return [person.ID for person in person_list]
+        return [person.id for person in person_list]
 
     def generate_id(self, person_list):
         """This function generates id for either staff or fellow."""
-        prefix = '{}-'.format(self.designation[0].upper())
-        id_exist = True
-        person_id = ""
-        while id_exist:
-            person_id = prefix + ''.join(
-                random.choice(string.ascii_uppercase + string.digits)
-                for _ in range(5)
-            )
-            if person_id not in self.get_existing_id(person_list):
-                id_exist = False
-                self.ID = person_id
+        current_id = '{}-'.format(self.designation[0].upper()) + ''.join(
+                     random.choice(string.ascii_uppercase + string.digits)
+                     for _ in range(5))
+        if current_id in self.get_existing_id(person_list):
+             generate_id(self, person_list, current_id)
+        self.id = current_id
 
     def print_creation_info(self):
         first_name = self.name.split()[0].title()
-        cprint("{} {} has been successfully added with ID {}.".format(
-            self.designation.title(), self.name.title(), self.ID.upper()),
+        cprint("{} {} has been successfully added with id {}.".format(
+            self.designation.title(), self.name.title(), self.id.upper()),
             "green")
         if self.office:
             cprint("{} has been allocated the office {}".format(
