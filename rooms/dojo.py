@@ -410,11 +410,14 @@ class Dojo(object):
         This function save state by storing data from the
         application's data structure into a database
         """
-        db_name = "" if not db_name else db_name
-        new_db = DB()
         person_list = self.staff_list + self.fellow_list
-        log = new_db.save_state(db_name, self.all_rooms, person_list)
-        cprint(log, "yellow")
+        if self.all_rooms or person_list:
+            db_name = "" if not db_name else db_name
+            new_db = DB()
+            log = new_db.save_state(db_name, self.all_rooms, person_list)
+            cprint(log, "yellow")
+        else:
+            cprint("There is no data to be saved in the database", "yellow")
 
     def load_state(self, db_name):
         """
