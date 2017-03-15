@@ -1,6 +1,6 @@
 invalid_command = (
     'Invalid Command: the value(s) are not entered' +
-    'correctly!\nKindly check the usage bellow'
+    ' correctly!\nKindly check the usage below'
 )
 
 unexpected_error = "The operation failed due to unexpected error!"
