@@ -17,6 +17,7 @@ def docopt_cmd(func):
     """ This is the decorator for the functions running the commands """
 
     def fn(self, arg):
+        opt = None
         try:
             opt = docopt(fn.__doc__, arg)
 
@@ -27,7 +28,7 @@ def docopt_cmd(func):
             cprint(e, "cyan")
             return
         except:
-            cprint(unexpected_error, "yellow")
+            return
 
         return func(self, opt)
 
